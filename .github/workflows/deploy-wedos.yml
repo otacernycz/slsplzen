@@ -1,0 +1,30 @@
+name: Deploy web to Wedos (FTP)
+
+on:
+  push:
+    branches:
+      - claude/web-projekt-github-938hr8
+    paths:
+      - "web/**"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Upload web/ to Wedos via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.WEDOS_FTP_HOST }}
+          username: ${{ secrets.WEDOS_FTP_USER }}
+          password: ${{ secrets.WEDOS_FTP_PASSWORD }}
+          local-dir: ./web/
+          server-dir: ./www/
+          exclude: |
+            **/README.md
+            **/ecomail-config.php
+            **/.git*
+            **/.git*/**
