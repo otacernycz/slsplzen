@@ -3,7 +3,7 @@ name: Deploy web to Wedos (FTP)
 on:
   push:
     branches:
-      - claude/web-projekt-github-938hr8
+      - main
     paths:
       - "web/**"
   workflow_dispatch:
