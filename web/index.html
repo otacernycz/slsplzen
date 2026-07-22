@@ -356,20 +356,13 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
         <div class="fstep active" data-step="1">
           <div class="q">
             <div class="q-label">Jaké máte zkušenosti s investováním?</div>
-            <div class="opts" data-group="experience">
-              <button type="button" class="opt" data-value="Zatím neinvestuji">Zatím neinvestuji</button>
-              <button type="button" class="opt" data-value="Mám spořicí účet nebo fondy">Mám spořicí účet nebo fondy</button>
-              <button type="button" class="opt" data-value="Už investuji a zvažuji nemovitost">Už investuji a zvažuji nemovitost</button>
-            </div>
-          </div>
-          <div class="q">
-            <div class="q-label">Co je vaším hlavním cílem?</div>
-            <div class="opts chips" data-group="goal">
-              <button type="button" class="opt chip" data-value="Vlastní bydlení do budoucna">Vlastní bydlení do budoucna</button>
-              <button type="button" class="opt chip" data-value="Pasivní příjem / renta">Pasivní příjem / renta</button>
-              <button type="button" class="opt chip" data-value="Zabezpečení dětí">Zabezpečení dětí</button>
-              <button type="button" class="opt chip" data-value="Zhodnocení úspor">Zhodnocení úspor</button>
-              <button type="button" class="opt chip" data-value="Zatím jen zjišťuji možnosti">Zatím jen zjišťuji možnosti</button>
+            <p class="q-hint">Můžete vybrat i více možností.</p>
+            <div class="opts" data-group="experience" data-multi="true">
+              <button type="button" class="opt" data-value="Mám s investováním jen minimální zkušenosti">Mám s investováním jen minimální zkušenosti</button>
+              <button type="button" class="opt" data-value="Mám zkušenosti s investicemi do různých typů fondů (ETF, OPF, apod.)">Mám zkušenosti s investicemi do různých typů fondů (ETF, OPF, apod.)</button>
+              <button type="button" class="opt" data-value="Mám zkušenosti s investicemi do nemovitostí">Mám zkušenosti s investicemi do nemovitostí</button>
+              <button type="button" class="opt" data-value="Mám zkušenosti s alternativními investicemi (komodity, krypto, apod.)">Mám zkušenosti s alternativními investicemi (komodity, krypto, apod.)</button>
+              <button type="button" class="opt" data-value="Mám zkušenosti s pokročilejšími investičními nástroji (FKI, burza CP, apod.)">Mám zkušenosti s pokročilejšími investičními nástroji (FKI, burza CP, apod.)</button>
             </div>
           </div>
         </div>
@@ -377,14 +370,13 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
         <!-- STEP 2 -->
         <div class="fstep" data-step="2">
           <div class="q">
-            <div class="q-label">Kolik můžete měsíčně odkládat na investice?</div>
-            <p class="q-hint">Pomůže nám to připravit příklady, které odpovídají vaší situaci. Odpověď je nezávazná.</p>
-            <div class="opts" data-group="budget">
-              <button type="button" class="opt" data-value="Do 3 000 Kč měsíčně">Do 3 000 Kč měsíčně</button>
-              <button type="button" class="opt" data-value="3 000 – 10 000 Kč měsíčně">3 000 – 10 000 Kč měsíčně</button>
-              <button type="button" class="opt" data-value="Více než 10 000 Kč měsíčně">Více než 10 000 Kč měsíčně</button>
-              <button type="button" class="opt" data-value="Jednorázová částka">Mám k dispozici jednorázovou částku</button>
-              <button type="button" class="opt" data-value="Nechce uvádět">Nechci uvádět</button>
+            <div class="q-label">Jaké informace oceníte?</div>
+            <p class="q-hint">Můžete vybrat i více možností.</p>
+            <div class="opts" data-group="zajmy" data-multi="true">
+              <button type="button" class="opt" data-value="Zajímají mě zejména praktické informace spojené s investováním do nemovitostí">Zajímají mě zejména praktické informace spojené s investováním do nemovitostí</button>
+              <button type="button" class="opt" data-value="Zajímají mě informace spojené s investicemi do standardních fondů">Zajímají mě informace spojené s investicemi do standardních fondů</button>
+              <button type="button" class="opt" data-value="Zajímají mě informace o pokročilejších investičních nástrojích">Zajímají mě informace o pokročilejších investičních nástrojích</button>
+              <button type="button" class="opt" data-value="Ocenil/a bych možnost poradit se s profesionálem se zkušenostmi v těchto oblastech">Ocenil/a bych možnost poradit se s profesionálem se zkušenostmi v těchto oblastech</button>
             </div>
           </div>
         </div>
@@ -528,8 +520,8 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
   /* ---------- Multi-step form ---------- */
   var form = document.getElementById('signup-form');
   var step = 1;
-  var answers = { experience: '', goal: '', budget: '' };
-  var stepLabels = { 1: 'Vaše situace', 2: 'Vaše možnosti', 3: 'Kontaktní údaje' };
+  var answers = { experience: [], zajmy: [] };
+  var stepLabels = { 1: 'Vaše zkušenosti', 2: 'Vaše priority', 3: 'Kontaktní údaje' };
 
   var stepNum = document.getElementById('step-num');
   var stepLabel = document.getElementById('step-label');
@@ -539,8 +531,8 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
   var errorBox = document.getElementById('form-error');
 
   function stepComplete() {
-    if (step === 1) return !!(answers.experience && answers.goal);
-    if (step === 2) return !!answers.budget;
+    if (step === 1) return answers.experience.length > 0;
+    if (step === 2) return answers.zajmy.length > 0;
     return true;
   }
 
@@ -567,10 +559,18 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
 
   document.querySelectorAll('.opts').forEach(function (group) {
     var key = group.dataset.group;
+    var multi = group.dataset.multi === 'true';
     group.querySelectorAll('.opt').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        answers[key] = btn.dataset.value;
-        group.querySelectorAll('.opt').forEach(function (b) { b.classList.toggle('selected', b === btn); });
+        if (multi) {
+          var val = btn.dataset.value;
+          var idx = answers[key].indexOf(val);
+          if (idx === -1) { answers[key].push(val); btn.classList.add('selected'); }
+          else { answers[key].splice(idx, 1); btn.classList.remove('selected'); }
+        } else {
+          answers[key] = btn.dataset.value;
+          group.querySelectorAll('.opt').forEach(function (b) { b.classList.toggle('selected', b === btn); });
+        }
         render();
       });
     });
@@ -629,9 +629,10 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
     body.append('name', name);
     body.append('email', email);
     body.append('phone', phone);
-    body.append('zkusenosti', answers.experience);
-    body.append('cil', answers.goal);
-    body.append('castka', answers.budget);
+    body.append('zkusenosti', answers.experience.join('; '));
+    // Reuses the existing "cil" field / Ecomail CIL merge field so subscribe.php
+    // and the Ecomail integration don't need to change.
+    body.append('cil', answers.zajmy.join('; '));
 
     fetch(form.action, {
       method: 'POST',
