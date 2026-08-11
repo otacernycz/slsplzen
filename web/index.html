@@ -187,11 +187,6 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
 .btn-next.ready { background: var(--red); cursor: pointer; }
 .btn-next.ready:hover { background: var(--red-dark); }
 .btn-next:disabled { opacity: 0.6; cursor: default; }
-.form-success { display: none; flex-direction: column; align-items: center; text-align: center; gap: 16px; padding: 24px 0; }
-.form-success.visible { display: flex; }
-.success-badge { width: 56px; height: 56px; border-radius: 999px; border: 1px solid #607E46; color: #607E46; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-.form-success h3 { font-size: 26px; }
-.form-success p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--grey-1); max-width: 420px; }
 .privacy-note { margin: 0; font-size: 13px; color: var(--grey-2); text-align: center; max-width: 460px; }
 
 /* Who we are */
@@ -408,12 +403,6 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
           <button type="submit" class="btn-next" id="btn-next">Pokračovat</button>
         </div>
       </form>
-
-      <div class="form-success" id="form-success">
-        <div class="success-badge">✓</div>
-        <h3>Děkujeme za přihlášení</h3>
-        <p>Právě jsme vám odeslali uvítací e-mail s plánem celého kurzu. První díl vám přijde už zítra. Pokud e-mail nevidíte, zkontrolujte prosím složku hromadné pošty.</p>
-      </div>
     </div>
 
     <p class="privacy-note">Vaše údaje slouží pouze pro zaslání kurzu. Nikomu je nepředáváme a z odběru se odhlásíte jedním kliknutím.</p>
@@ -581,23 +570,10 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
   });
 
   function showSuccess() {
-    // Keep the block height so the page doesn't jump, then scroll the
-    // success message into view (mobile: form is taller than the message).
-    var card = form.parentElement;
-    card.style.minHeight = card.offsetHeight + 'px';
-    card.style.display = 'flex';
-    card.style.alignItems = 'center';
-    card.style.justifyContent = 'center';
-    form.style.display = 'none';
-    var success = document.getElementById('form-success');
-    success.classList.add('visible');
-    requestAnimationFrame(function () {
-      var rect = success.getBoundingClientRect();
-      if (rect.top < 0 || rect.bottom > window.innerHeight) {
-        window.scrollTo({ top: window.pageYOffset + rect.top - 120, behavior: 'smooth' });
-      }
-    });
+    // Redirect to a dedicated thank-you page instead of an inline message —
+    // gives ad platforms (Google Ads, Sklik, Meta) a stable conversion URL.
     if (window.dataLayer) window.dataLayer.push({ event: 'minikurz_signup' });
+    window.location.href = 'dekujeme.html';
   }
 
   form.addEventListener('submit', function (e) {
