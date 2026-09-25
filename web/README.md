@@ -21,9 +21,9 @@ a `dekujeme.html`.
 
 `registrace.php` čte `../ecomail-config.php` a přihlašuje kontakty do
 stávajícího seznamu `ECOMAIL_LIST_ID` (případně do `ECOMAIL_EVENT_LIST_ID`,
-pokud je vyplněný). Minikurzové automatizace se nespouští. Kontakty se odliší
-štítky: akce (`nemovitosti-10-2026`), počet osob (`hoste-2`), zdroj a kampaň
-z UTM (`zdroj-…`, `kampan-…`) a odpovědi z dotazníku (`vztah-…`, `zajem-…`).
+pokud je vyplněný). Minikurzové automatizace se nespouští. Kontakt dostane
+štítek akce (`nemovitosti-10-2026`) a vyplní se vlastní pole `AKCE`,
+`AKCE_VZTAH`, `AKCE_ZAJMY` a `AKCE_ZDROJ` — ta musí v seznamu v Ecomailu existovat.
 
 Měření (GTM `GTM-MW3Z5PJH`) — události jsou obecné, liší se parametrem
 `event_id`, takže v GTM stačí jeden trigger pro všechny budoucí akce:
