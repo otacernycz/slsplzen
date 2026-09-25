@@ -12,7 +12,8 @@ define('ECOMAIL_API_KEY', 'PASTE-YOUR-ECOMAIL-API-KEY-HERE');
 define('ECOMAIL_LIST_ID', 1);
 
 // --- Registrace na akce (např. /nemovitosti_10_2026/) -----------------
-// Samostatný seznam v Ecomailu pro leady z akcí, ať nepadají do
-// minikurzové sekvence. Bez něj registrace na akce nefungují.
-define('ECOMAIL_EVENT_LIST_ID', 2);
+// Nepovinné. Bez něj se registrace z akcí ukládají do ECOMAIL_LIST_ID výše
+// a od minikurzu se odliší štítky (bez spuštění minikurzových automatizací).
+// Vyplňte jen pokud chcete akce v samostatném seznamu.
+define('ECOMAIL_EVENT_LIST_ID', '');
 

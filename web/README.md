@@ -19,9 +19,11 @@ Každá akce má vlastní složku (`/<tema>_<mesic>_<rok>/`). Pro další akci
 zkopírujte složku, přejmenujte ji a upravte texty, `EVENT_ID` v `index.html`
 a `dekujeme.html`.
 
-`registrace.php` čte `../ecomail-config.php` a přihlašuje kontakty do seznamu
-`ECOMAIL_EVENT_LIST_ID` (samostatný seznam pro akce, se štítky akce, počtu
-osob a zdroje). Notifikace a další práce s leady se řeší v Ecomailu.
+`registrace.php` čte `../ecomail-config.php` a přihlašuje kontakty do
+stávajícího seznamu `ECOMAIL_LIST_ID` (případně do `ECOMAIL_EVENT_LIST_ID`,
+pokud je vyplněný). Minikurzové automatizace se nespouští. Kontakty se odliší
+štítky: akce (`nemovitosti-10-2026`), počet osob (`hoste-2`), zdroj a kampaň
+z UTM (`zdroj-…`, `kampan-…`) a odpovědi z dotazníku (`vztah-…`, `zajem-…`).
 
 Měření (GTM `GTM-MW3Z5PJH`) — události jsou obecné, liší se parametrem
 `event_id`, takže v GTM stačí jeden trigger pro všechny budoucí akce:

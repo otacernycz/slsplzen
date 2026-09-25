@@ -2,9 +2,12 @@
 declare(strict_types=1);
 
 // Registrace na akci „Od nájmu k výnosu" (13. 10. 2026).
-// Lead se přihlásí do samostatného seznamu v Ecomailu (ECOMAIL_EVENT_LIST_ID
-// v ../ecomail-config.php), ať nepadá do minikurzové sekvence. Další práce
-// s leady (notifikace, automatizace) se řeší v Ecomailu.
+// Lead se přihlásí do stávajícího seznamu v Ecomailu (ECOMAIL_LIST_ID
+// z ../ecomail-config.php) a od minikurzových kontaktů se odliší štítky.
+// Pokud je v configu nastavený ECOMAIL_EVENT_LIST_ID, použije se ten.
+// Automatizace seznamu se NEspouští (trigger_autoresponders = false),
+// takže registrovaní nedostanou minikurzové e-maily. Odpovědi z dotazníku
+// jdou do štítků, ne do polí, aby nepřepsaly odpovědi z minikurzu.
 //
 // Pro další akci: zkopírovat celou složku, přejmenovat a upravit
 // EVENT_ID v index.html a dekujeme.html (štítek v Ecomailu se odvodí z něj).
@@ -28,9 +31,11 @@ if (!is_file($configFile)) {
 }
 require $configFile;
 
-$listId = defined('ECOMAIL_EVENT_LIST_ID') ? (string) ECOMAIL_EVENT_LIST_ID : '';
+$listId = defined('ECOMAIL_EVENT_LIST_ID') && (string) ECOMAIL_EVENT_LIST_ID !== ''
+    ? (string) ECOMAIL_EVENT_LIST_ID
+    : (defined('ECOMAIL_LIST_ID') ? (string) ECOMAIL_LIST_ID : '');
 if ($listId === '' || !defined('ECOMAIL_API_KEY')) {
-    error_log('registrace.php: set ECOMAIL_EVENT_LIST_ID in ecomail-config.php');
+    error_log('registrace.php: missing ECOMAIL_LIST_ID / ECOMAIL_API_KEY in ecomail-config.php');
     respond(500, false, 'Registrace je dočasně mimo provoz. Zkuste to prosím později.');
 }
 
@@ -54,11 +59,21 @@ if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen(preg_re
     respond(422, false, 'Vyplňte prosím jméno, platný telefon a e-mail.');
 }
 
-/* ---------- Ecomail — samostatný seznam pro akce ---------- */
+/* ---------- Ecomail — štítky akce ---------- */
 $nameParts = preg_split('/\s+/', $name, 2);
 $tags = [str_replace('_', '-', $eventId), 'hoste-' . $pocet];
 if ($zdroj !== '') $tags[] = 'zdroj-' . preg_replace('/[^a-z0-9-]/', '', strtolower($zdroj));
 if ($kampan !== '') $tags[] = 'kampan-' . preg_replace('/[^a-z0-9-]/', '', strtolower(str_replace('_', '-', $kampan)));
+
+// Odpovědi z dotazníku jako štítky, např. „vztah-uz-pronajimam", „zajem-dane-z-pronajmu".
+function slug(string $v): string {
+    $v = strtr(mb_strtolower($v), ['á'=>'a','č'=>'c','ď'=>'d','é'=>'e','ě'=>'e','í'=>'i','ň'=>'n','ó'=>'o','ř'=>'r','š'=>'s','ť'=>'t','ú'=>'u','ů'=>'u','ý'=>'y','ž'=>'z']);
+    return trim(preg_replace('/[^a-z0-9]+/', '-', $v), '-');
+}
+if ($vztah !== '') $tags[] = 'vztah-' . slug($vztah);
+foreach (array_filter(array_map('trim', explode(';', $zajmy))) as $z) {
+    $tags[] = 'zajem-' . slug($z);
+}
 
 $payload = [
     'subscriber_data' => [
@@ -67,12 +82,8 @@ $payload = [
         'surname' => $nameParts[1] ?? '',
         'phone' => $phone,
         'tags' => $tags,
-        'custom_fields' => [
-            'ZKUSENOSTI' => $vztah,
-            'CIL' => $zajmy,
-        ],
     ],
-    'trigger_autoresponders' => true,
+    'trigger_autoresponders' => false,
     'update_existing' => true,
     'resubscribe' => false,
 ];
