@@ -17,11 +17,11 @@ investování do nemovitostí. Hostováno na Wedosu, nahráváno přes FTP.
 
 Každá akce má vlastní složku (`/<tema>_<mesic>_<rok>/`). Pro další akci
 zkopírujte složku, přejmenujte ji a upravte texty, `EVENT_ID` v `index.html`
-a `dekujeme.html` a `EVENT_NAME` v `registrace.php`.
+a `dekujeme.html`.
 
-`registrace.php` čte `../ecomail-config.php` a potřebuje v něm aspoň jedno z:
-`ECOMAIL_EVENT_LIST_ID` (samostatný seznam v Ecomailu) nebo
-`EVENT_NOTIFY_EMAIL` (upozornění na každou registraci e-mailem).
+`registrace.php` čte `../ecomail-config.php` a přihlašuje kontakty do seznamu
+`ECOMAIL_EVENT_LIST_ID` (samostatný seznam pro akce, se štítky akce, počtu
+osob a zdroje). Notifikace a další práce s leady se řeší v Ecomailu.
 
 Měření (GTM `GTM-MW3Z5PJH`) — události jsou obecné, liší se parametrem
 `event_id`, takže v GTM stačí jeden trigger pro všechny budoucí akce:
