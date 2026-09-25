@@ -17,3 +17,8 @@ define('ECOMAIL_LIST_ID', 1);
 // Vyplňte jen pokud chcete akce v samostatném seznamu.
 define('ECOMAIL_EVENT_LIST_ID', '');
 
+// Nepovinné: zápis registrací z webu do pracovní Google tabulky + notifikace.
+// URL webové aplikace z Apps Scriptu (Nasadit → Webová aplikace) a tajný
+// token, který musí sedět s WEB_TOKEN ve skriptu. Do gitu nikdy nedávat.
+define('EVENT_SHEET_WEBHOOK', '');
+define('EVENT_SHEET_TOKEN', '');

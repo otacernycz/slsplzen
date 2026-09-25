@@ -36,3 +36,7 @@ Obsah téhle složky (`web/`) se 1:1 nahrává do webrootu na Wedosu.
 `ecomail-config.php` se do gitu nikdy nedává (viz `.gitignore`) —
 na serveru musí zůstat s reálným klíčem, lokálně/v repu je jen vzorový
 soubor.
+
+Volitelně registrace posílá i do pracovní Google tabulky (Apps Script webová
+aplikace, `EVENT_SHEET_WEBHOOK` + `EVENT_SHEET_TOKEN` v `ecomail-config.php`).
+Registrace je úspěšná, když se uloží aspoň do Ecomailu, nebo do tabulky.

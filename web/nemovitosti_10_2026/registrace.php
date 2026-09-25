@@ -101,9 +101,49 @@ $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $curlError = curl_error($ch);
 curl_close($ch);
 
-if ($response !== false && $httpCode >= 200 && $httpCode < 300) {
-    respond(200, true);
+$ecomailOk = $response !== false && $httpCode >= 200 && $httpCode < 300;
+if (!$ecomailOk) {
+    error_log('registrace.php: Ecomail failed - HTTP ' . $httpCode . ' ' . $curlError . ' ' . (string) $response);
 }
 
-error_log('registrace.php: Ecomail failed - HTTP ' . $httpCode . ' ' . $curlError . ' ' . (string) $response);
+/* ---------- Pracovní tabulka (Google Apps Script) ---------- */
+// Nepovinné: EVENT_SHEET_WEBHOOK (URL webové aplikace) a EVENT_SHEET_TOKEN
+// v ../ecomail-config.php. Skript lead zapíše do pracovní tabulky a pošle
+// e-mailovou notifikaci — stejně jako u leadů z Meta formuláře.
+$sheetOk = false;
+if (defined('EVENT_SHEET_WEBHOOK') && (string) EVENT_SHEET_WEBHOOK !== '') {
+    $ch = curl_init((string) EVENT_SHEET_WEBHOOK);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode([
+            'token' => defined('EVENT_SHEET_TOKEN') ? (string) EVENT_SHEET_TOKEN : '',
+            'event_id' => $eventId,
+            'name' => $name,
+            'email' => $email,
+            'phone' => $phone,
+            'vztah' => $vztah,
+            'zajmy' => $zajmy,
+            'zdroj' => $zdroj,
+            'kampan' => $kampan,
+        ], JSON_UNESCAPED_UNICODE),
+        CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+        CURLOPT_FOLLOWLOCATION => true, // Apps Script odpovídá přesměrováním
+        CURLOPT_CONNECTTIMEOUT => 5,
+        CURLOPT_TIMEOUT => 20,
+    ]);
+    $sheetResponse = curl_exec($ch);
+    $sheetCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    $sheetData = is_string($sheetResponse) ? json_decode($sheetResponse, true) : null;
+    $sheetOk = $sheetCode >= 200 && $sheetCode < 300 && is_array($sheetData) && !empty($sheetData['ok']);
+    if (!$sheetOk) {
+        error_log('registrace.php: sheet webhook failed - HTTP ' . $sheetCode . ' ' . (string) $sheetResponse);
+    }
+}
+
+// Stačí, když se lead uloží aspoň na jedno místo — hlavně ať nikdo nezapadne.
+if ($ecomailOk || $sheetOk) {
+    respond(200, true);
+}
 respond(502, false, 'Registraci se nepodařilo uložit. Zkuste to prosím znovu.');
