@@ -10,6 +10,25 @@ investování do nemovitostí. Hostováno na Wedosu, nahráváno přes FTP.
 - `ecomail-config.example.php` — vzor konfigurace; zkopírovat na serveru
   do `ecomail-config.php` a doplnit reálný API klíč
 - `assets/`, `fonts/`, `infografiky/` — statická media
+- `nemovitosti_10_2026/` — registrační stránka na akci „Od nájmu k výnosu"
+  (13. 10. 2026): `index.html` (dotazník), `dekujeme.html`, `registrace.php`
+
+## Registrační stránky na akce
+
+Každá akce má vlastní složku (`/<tema>_<mesic>_<rok>/`). Pro další akci
+zkopírujte složku, přejmenujte ji a upravte texty, `EVENT_ID` v `index.html`
+a `dekujeme.html`.
+
+`registrace.php` čte `../ecomail-config.php` a přihlašuje kontakty do
+stávajícího seznamu `ECOMAIL_LIST_ID` (případně do `ECOMAIL_EVENT_LIST_ID`,
+pokud je vyplněný). Minikurzové automatizace se nespouští. Kontakty se odliší
+štítky: akce (`nemovitosti-10-2026`), počet osob (`hoste-2`), zdroj a kampaň
+z UTM (`zdroj-…`, `kampan-…`) a odpovědi z dotazníku (`vztah-…`, `zajem-…`).
+
+Měření (GTM `GTM-MW3Z5PJH`) — události jsou obecné, liší se parametrem
+`event_id`, takže v GTM stačí jeden trigger pro všechny budoucí akce:
+- `event_registrace` — úspěšné odeslání formuláře
+- `event_registrace_dekujeme` — načtení děkovací stránky
 
 ## Nasazení
 
