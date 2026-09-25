@@ -2,12 +2,10 @@
 declare(strict_types=1);
 
 // Registrace na akci „Od nájmu k výnosu" (13. 10. 2026).
-// Lead se přihlásí do stávajícího seznamu v Ecomailu (ECOMAIL_LIST_ID
-// z ../ecomail-config.php) a od minikurzových kontaktů se odliší štítky.
-// Pokud je v configu nastavený ECOMAIL_EVENT_LIST_ID, použije se ten.
-// Automatizace seznamu se NEspouští (trigger_autoresponders = false),
-// takže registrovaní nedostanou minikurzové e-maily. Odpovědi z dotazníku
-// jdou do štítků, ne do polí, aby nepřepsaly odpovědi z minikurzu.
+// Lead jde do pracovní Google tabulky přes Apps Script (EVENT_SHEET_WEBHOOK
+// + EVENT_SHEET_TOKEN v ../ecomail-config.php), který pošle i notifikaci.
+// Ecomail (ECOMAIL_LIST_ID) slouží jen jako záloha, když tabulka selže —
+// pak kontakt dostane štítky akce, bez spuštění minikurzových automatizací.
 //
 // Pro další akci: zkopírovat celou složku, přejmenovat a upravit
 // EVENT_ID v index.html a dekujeme.html (štítek v Ecomailu se odvodí z něj).
@@ -58,56 +56,8 @@ if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen(preg_re
     respond(422, false, 'Vyplňte prosím jméno, platný telefon a e-mail.');
 }
 
-/* ---------- Ecomail — štítky akce ---------- */
-$nameParts = preg_split('/\s+/', $name, 2);
-$tags = [str_replace('_', '-', $eventId)];
-if ($zdroj !== '') $tags[] = 'zdroj-' . preg_replace('/[^a-z0-9-]/', '', strtolower($zdroj));
-if ($kampan !== '') $tags[] = 'kampan-' . preg_replace('/[^a-z0-9-]/', '', strtolower(str_replace('_', '-', $kampan)));
-
-// Odpovědi z dotazníku jako štítky, např. „vztah-uz-pronajimam", „zajem-dane-z-pronajmu".
-function slug(string $v): string {
-    $v = strtr(mb_strtolower($v), ['á'=>'a','č'=>'c','ď'=>'d','é'=>'e','ě'=>'e','í'=>'i','ň'=>'n','ó'=>'o','ř'=>'r','š'=>'s','ť'=>'t','ú'=>'u','ů'=>'u','ý'=>'y','ž'=>'z']);
-    return trim(preg_replace('/[^a-z0-9]+/', '-', $v), '-');
-}
-if ($vztah !== '') $tags[] = 'vztah-' . slug($vztah);
-foreach (array_filter(array_map('trim', explode(';', $zajmy))) as $z) {
-    $tags[] = 'zajem-' . slug($z);
-}
-
-$payload = [
-    'subscriber_data' => [
-        'email' => $email,
-        'name' => $nameParts[0],
-        'surname' => $nameParts[1] ?? '',
-        'phone' => $phone,
-        'tags' => $tags,
-    ],
-    'trigger_autoresponders' => false,
-    'update_existing' => true,
-    'resubscribe' => false,
-];
-
-$ch = curl_init('https://api2.ecomailapp.cz/lists/' . rawurlencode($listId) . '/subscribe');
-curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => json_encode($payload, JSON_UNESCAPED_UNICODE),
-    CURLOPT_HTTPHEADER => ['key: ' . ECOMAIL_API_KEY, 'Content-Type: application/json'],
-    CURLOPT_CONNECTTIMEOUT => 5,
-    CURLOPT_TIMEOUT => 12,
-]);
-$response = curl_exec($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curlError = curl_error($ch);
-curl_close($ch);
-
-$ecomailOk = $response !== false && $httpCode >= 200 && $httpCode < 300;
-if (!$ecomailOk) {
-    error_log('registrace.php: Ecomail failed - HTTP ' . $httpCode . ' ' . $curlError . ' ' . (string) $response);
-}
-
 /* ---------- Pracovní tabulka (Google Apps Script) ---------- */
-// Nepovinné: EVENT_SHEET_WEBHOOK (URL webové aplikace) a EVENT_SHEET_TOKEN
+// EVENT_SHEET_WEBHOOK (URL webové aplikace) a EVENT_SHEET_TOKEN
 // v ../ecomail-config.php. Skript lead zapíše do pracovní tabulky a pošle
 // e-mailovou notifikaci — stejně jako u leadů z Meta formuláře.
 $sheetOk = false;
@@ -142,8 +92,60 @@ if (defined('EVENT_SHEET_WEBHOOK') && (string) EVENT_SHEET_WEBHOOK !== '') {
     }
 }
 
-// Stačí, když se lead uloží aspoň na jedno místo — hlavně ať nikdo nezapadne.
-if ($ecomailOk || $sheetOk) {
+/* ---------- Ecomail — jen záloha ---------- */
+// Registrace z akce do Ecomailu nepatří (ten je pro minikurz). Použije se jen
+// jako záloha, když zápis do tabulky selže nebo není nastavený, ať lead nezapadne.
+$ecomailOk = false;
+if (!$sheetOk) {
+    $nameParts = preg_split('/\s+/', $name, 2);
+    $tags = [str_replace('_', '-', $eventId)];
+    if ($zdroj !== '') $tags[] = 'zdroj-' . preg_replace('/[^a-z0-9-]/', '', strtolower($zdroj));
+    if ($kampan !== '') $tags[] = 'kampan-' . preg_replace('/[^a-z0-9-]/', '', strtolower(str_replace('_', '-', $kampan)));
+
+    // Odpovědi z dotazníku jako štítky, např. „vztah-uz-pronajimam", „zajem-dane-z-pronajmu".
+    if (!function_exists('slug')) { function slug(string $v): string {
+        $v = strtr(mb_strtolower($v), ['á'=>'a','č'=>'c','ď'=>'d','é'=>'e','ě'=>'e','í'=>'i','ň'=>'n','ó'=>'o','ř'=>'r','š'=>'s','ť'=>'t','ú'=>'u','ů'=>'u','ý'=>'y','ž'=>'z']);
+        return trim(preg_replace('/[^a-z0-9]+/', '-', $v), '-');
+    } }
+    if ($vztah !== '') $tags[] = 'vztah-' . slug($vztah);
+    foreach (array_filter(array_map('trim', explode(';', $zajmy))) as $z) {
+        $tags[] = 'zajem-' . slug($z);
+    }
+
+    $payload = [
+        'subscriber_data' => [
+            'email' => $email,
+            'name' => $nameParts[0],
+            'surname' => $nameParts[1] ?? '',
+            'phone' => $phone,
+            'tags' => $tags,
+        ],
+        'trigger_autoresponders' => false,
+        'update_existing' => true,
+        'resubscribe' => false,
+    ];
+
+    $ch = curl_init('https://api2.ecomailapp.cz/lists/' . rawurlencode($listId) . '/subscribe');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($payload, JSON_UNESCAPED_UNICODE),
+        CURLOPT_HTTPHEADER => ['key: ' . ECOMAIL_API_KEY, 'Content-Type: application/json'],
+        CURLOPT_CONNECTTIMEOUT => 5,
+        CURLOPT_TIMEOUT => 12,
+    ]);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
+    curl_close($ch);
+
+    $ecomailOk = $response !== false && $httpCode >= 200 && $httpCode < 300;
+    if (!$ecomailOk) {
+        error_log('registrace.php: Ecomail failed - HTTP ' . $httpCode . ' ' . $curlError . ' ' . (string) $response);
+    }
+}
+
+if ($sheetOk || $ecomailOk) {
     respond(200, true);
 }
 respond(502, false, 'Registraci se nepodařilo uložit. Zkuste to prosím znovu.');

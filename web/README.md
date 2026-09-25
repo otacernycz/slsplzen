@@ -37,6 +37,7 @@ Obsah téhle složky (`web/`) se 1:1 nahrává do webrootu na Wedosu.
 na serveru musí zůstat s reálným klíčem, lokálně/v repu je jen vzorový
 soubor.
 
-Volitelně registrace posílá i do pracovní Google tabulky (Apps Script webová
-aplikace, `EVENT_SHEET_WEBHOOK` + `EVENT_SHEET_TOKEN` v `ecomail-config.php`).
-Registrace je úspěšná, když se uloží aspoň do Ecomailu, nebo do tabulky.
+Registrace z akcí jdou primárně do pracovní Google tabulky (Apps Script webová
+aplikace, `EVENT_SHEET_WEBHOOK` + `EVENT_SHEET_TOKEN` v `ecomail-config.php`),
+která pošle i e-mailovou notifikaci. Do Ecomailu se lead zapíše jen jako
+záloha, když zápis do tabulky selže nebo není nastavený.
