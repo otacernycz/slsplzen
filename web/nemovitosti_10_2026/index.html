@@ -374,13 +374,6 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
               <button type="button" class="opt chip" data-value="Nemovitostní fondy">Nemovitostní fondy</button>
             </div>
           </div>
-          <div class="q">
-            <div class="q-label">Kolik vás dorazí?</div>
-            <div class="opts chips" data-group="pocet" data-multi="false">
-              <button type="button" class="opt chip" data-value="1">1 osoba</button>
-              <button type="button" class="opt chip" data-value="2">2 osoby</button>
-            </div>
-          </div>
         </div>
 
         <!-- STEP 3 -->
@@ -497,7 +490,7 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
   /* ---------- Multi-step form ---------- */
   var form = document.getElementById('signup-form');
   var step = 1;
-  var answers = { vztah: '', zajmy: [], pocet: '' };
+  var answers = { vztah: '', zajmy: [] };
   var stepLabels = { 1: 'Vaše situace', 2: 'Vaše priority', 3: 'Kontakt' };
 
   var stepNum = document.getElementById('step-num');
@@ -509,7 +502,7 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
 
   function stepComplete() {
     if (step === 1) return answers.vztah !== '';
-    if (step === 2) return answers.zajmy.length > 0 && answers.pocet !== '';
+    if (step === 2) return answers.zajmy.length > 0;
     return true;
   }
 
@@ -587,7 +580,6 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
     body.append('phone', phone);
     body.append('vztah', answers.vztah);
     body.append('zajmy', answers.zajmy.join('; '));
-    body.append('pocet', answers.pocet);
     body.append('zdroj', params.get('utm_source') || '');
     body.append('kampan', params.get('utm_campaign') || '');
 

@@ -51,7 +51,6 @@ $email   = field('email', 160);
 $phone   = preg_replace('/[^0-9+]/', '', field('phone', 30));
 $vztah   = field('vztah');
 $zajmy   = field('zajmy');
-$pocet   = preg_replace('/\D/', '', field('pocet', 2)) ?: '1';
 $zdroj   = field('zdroj', 60);
 $kampan  = field('kampan', 100);
 
@@ -61,7 +60,7 @@ if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen(preg_re
 
 /* ---------- Ecomail — štítky akce ---------- */
 $nameParts = preg_split('/\s+/', $name, 2);
-$tags = [str_replace('_', '-', $eventId), 'hoste-' . $pocet];
+$tags = [str_replace('_', '-', $eventId)];
 if ($zdroj !== '') $tags[] = 'zdroj-' . preg_replace('/[^a-z0-9-]/', '', strtolower($zdroj));
 if ($kampan !== '') $tags[] = 'kampan-' . preg_replace('/[^a-z0-9-]/', '', strtolower(str_replace('_', '-', $kampan)));
 
