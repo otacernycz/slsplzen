@@ -10,8 +10,10 @@ investování do nemovitostí. Hostováno na Wedosu, nahráváno přes FTP.
 - `ecomail-config.example.php` — vzor konfigurace; zkopírovat na serveru
   do `ecomail-config.php` a doplnit reálný API klíč
 - `assets/`, `fonts/`, `infografiky/` — statická media
-- `nemovitosti_10_2026/` — registrační stránka na akci „Od nájmu k výnosu"
-  (13. 10. 2026): `index.html` (dotazník), `dekujeme.html`, `registrace.php`
+- `nemovitosti_10_2026/` — stránka akce „Od nájmu k výnosu" (13. 10. 2026).
+  Akce proběhla, takže `index.html` je teď stránka „proběhlo“ (sítě + CTA na
+  minikurz). Plná registrace (dotazník, `dekujeme.html`, `registrace.php`)
+  je uložená jako šablona v `../templates/akce/`, včetně návodu na další akci.
 
 ## Registrační stránky na akce
 
