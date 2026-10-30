@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Akce Swiss Life Select Plzeň — pozvánky a fotogalerie</title>
+<meta name="description" content="Vzdělávací odpoledne a setkání týmu Swiss Life Select Plzeň – Lochotínská. Pozvánky na nadcházející akce a fotky z těch, které už proběhly.">
+<meta name="theme-color" content="#FFFFFF">
+<meta property="og:title" content="Akce Swiss Life Select Plzeň">
+<meta property="og:description" content="Pozvánky na nadcházející akce a fotky z těch, které už proběhly.">
+<meta property="og:image" content="assets/img/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;1,400&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<div class="topbar"></div>
+<div class="header-wrap">
+  <header class="container header">
+    <a href="./" aria-label="Swiss Life Select – akce">
+      <img src="assets/logo/swisslife-select.svg" alt="Swiss Life Select">
+    </a>
+    <nav class="header-nav" aria-label="Hlavní navigace">
+      <a class="header-link hide-sm" href="#nadchazejici">Nadcházející</a>
+      <a class="header-link hide-sm" href="#probehle">Fotogalerie</a>
+      <a class="header-link cta" href="#sledovat">Nezmeškat pozvánku</a>
+    </nav>
+  </header>
+</div>
+
+<main>
+
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <span class="eyebrow hero-anim">Akce · Swiss Life Select Plzeň</span>
+      <h1 class="hero-anim d1">Odpoledne, ze kterých odcházíte chytřejší</h1>
+      <p class="lead hero-anim d2">Pořádáme vzdělávací odpoledne a setkání o penězích, nemovitostech a investicích. Prakticky, srozumitelně a s prostorem pro vaše otázky.</p>
+      <div class="hero-cta-row hero-anim d3">
+        <a class="btn-primary" href="#nadchazejici">Nadcházející akce</a>
+        <a class="text-link" href="#probehle">Fotky z proběhlých</a>
+      </div>
+    </div>
+    <div class="hero-visual hero-anim d2">
+      <img src="assets/img/pozvanka-predani.jpg" width="928" height="932" alt="Ruka předává pozvánku s červenou pečetí">
+    </div>
+  </div>
+</section>
+
+<section id="nadchazejici" class="container section">
+  <div class="section-head">
+    <span class="eyebrow">Pozvánky</span>
+    <h2>Nadcházející akce</h2>
+    <p>Kapacita bývá omezená, místa se obvykle zaplní během pár dní.</p>
+  </div>
+
+  <!--
+    Jedna akce = jeden <a class="event">. Nejbližší nahoru.
+    Odkaz míří na registrační stránku akce (šablona v templates/akce/).
+    Když nic nechystáme, smazat .events a odkomentovat .empty níže.
+  -->
+  <div class="events">
+    <a class="event" href="https://www.investicniminikurz.cz/renta_11_2026/?utm_source=akce-web">
+      <div class="event-date" aria-hidden="true">
+        <span class="event-day">26</span>
+        <span class="event-month">listopad</span>
+      </div>
+      <div class="event-body">
+        <span class="eyebrow red">Klientský podvečer · na pozvání</span>
+        <span class="event-name">Švýcarská renta a daňové úlevy při investování</span>
+        <span class="event-desc">Jak efektivně tvořit rentu, co se mění v penzích v roce 2027 a jak ještě letos využít daňové úlevy.</span>
+        <span class="event-meta">
+          <span><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#D82034" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Čtvrtek 26. 11. 2026</span>
+          <span><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#D82034" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>Plzeň · místo sdělíme pozvaným</span>
+          <span><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#D82034" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Omezená kapacita</span>
+        </span>
+      </div>
+      <span class="event-cta">Registrovat se →</span>
+    </a>
+  </div>
+
+  <!--
+  <div class="empty">
+    <div class="empty-body">
+      <span class="empty-title">Další akci právě chystáme</span>
+      <p>Termín a téma oznámíme nejdřív na sítích. Sledujte nás, ať vám pozvánka neuteče.</p>
+    </div>
+    <a class="btn-primary" href="#sledovat">Sledovat novinky</a>
+  </div>
+  -->
+</section>
+
+<section id="probehle" class="section-wash">
+  <div class="container section">
+    <div class="section-head">
+      <span class="eyebrow">Fotogalerie</span>
+      <h2>Proběhlé akce</h2>
+      <p>Jak to u nás vypadá. Nejnovější akce nahoře.</p>
+    </div>
+
+    <!-- Jedna akce = jedna .past-card, odkaz na detail s galerií (vzor: nemovitosti-10-2026.html). -->
+    <div class="past">
+      <a class="past-card" href="nemovitosti-10-2026.html">
+        <div class="past-cover">
+          <img src="assets/event_13_10/nahled/sls_event_some_9.jpg" width="560" height="700" alt="Panel řečníků na akci Od nájmu k výnosu" loading="lazy">
+        </div>
+        <div class="past-body">
+          <span class="eyebrow">13. října 2026 · Plzeň</span>
+          <span class="past-name">Od nájmu k výnosu</span>
+          <p class="past-desc">Vzdělávací odpoledne o investičních nemovitostech: výnosy, nájemní smlouvy a daně.</p>
+          <span class="past-cta">Fotogalerie →</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="sledovat" class="container section follow">
+  <div class="follow-copy">
+    <span class="eyebrow">Nezmeškat pozvánku</span>
+    <h2>Pozvánky posíláme nejdřív na sítích</h2>
+    <p>Termín a téma další akce oznámíme na Instagramu, Facebooku a LinkedInu dřív, než je tady. Sledujte nás a budete mezi prvními, kdo se může přihlásit.</p>
+  </div>
+  <div class="social-list">
+    <a class="social-link" href="https://www.instagram.com/slsplzen/" target="_blank" rel="noopener">
+      <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D82034" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg>
+      <span><span class="social-name">Instagram</span><span class="social-handle">@slsplzen</span></span>
+      <svg class="social-arrow" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </a>
+    <a class="social-link" href="https://www.facebook.com/slsplzen" target="_blank" rel="noopener">
+      <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D82034" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+      <span><span class="social-name">Facebook</span><span class="social-handle">Swiss Life Select Plzeň</span></span>
+      <svg class="social-arrow" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </a>
+    <a class="social-link" href="https://www.linkedin.com/company/swiss-life-select-plzen/" target="_blank" rel="noopener">
+      <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D82034" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+      <span><span class="social-name">LinkedIn</span><span class="social-handle">Swiss Life Select Plzeň</span></span>
+      <svg class="social-arrow" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </a>
+  </div>
+</section>
+
+<section class="section-bordered">
+  <div class="container about">
+    <div class="about-visual">
+      <img src="assets/img/hans-cte.jpg" width="698" height="682" alt="Muž s úsměvem čte pozvánku s červenou pečetí" loading="lazy">
+    </div>
+    <div class="about-copy">
+      <span class="eyebrow">Kdo akce pořádá</span>
+      <h2>Tým Swiss Life Select Plzeň — Lochotínská</h2>
+      <p>Jsme součástí Swiss Life Group — švýcarské finanční skupiny s více než 165letou historií. Klientům pomáháme s investicemi, financováním i správou nemovitostí pod jednou střechou.</p>
+      <a class="text-link" href="https://www.investicniminikurz.cz/" style="align-self:flex-start">Bezplatný minikurz o nemovitostech</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <img src="assets/logo/swisslife-select.svg" alt="Swiss Life Select">
+        <p class="footer-claim">Pomáháme lidem vést život podle vlastních představ.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col"><span class="footer-col-head">Kancelář</span><div class="footer-col-body"><span>[ULICE A ČP]</span><span>Lochotínská, Plzeň</span></div></div>
+        <div class="footer-col"><span class="footer-col-head">Odkazy</span><div class="footer-col-body"><a href="https://www.investicniminikurz.cz/">Investiční minikurz</a><a href="https://www.instagram.com/slsplzen/" target="_blank" rel="noopener">Instagram</a><a href="https://www.facebook.com/slsplzen" target="_blank" rel="noopener">Facebook</a></div></div>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <span>© 2026 Swiss Life Select a. s. · kancelář Plzeň – Lochotínská</span>
+      <a href="#">Zásady ochrany osobních údajů</a><!-- TODO: odkaz -->
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+name: Deploy akce-web to Wedos (FTP)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "akce-web/**"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Složka domény na Wedosu, např. ./www/domains/akce-example.cz/
+      # Nastavit v GitHubu: Settings › Secrets and variables › Actions › Variables › AKCE_SERVER_DIR
+      - name: Check target folder
+        if: ${{ vars.AKCE_SERVER_DIR == '' }}
+        run: |
+          echo "::error::Chybí proměnná AKCE_SERVER_DIR (složka domény na Wedosu)."
+          exit 1
+
+      - name: Upload akce-web/ to Wedos via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.WEDOS_FTP_HOST }}
+          username: ${{ secrets.WEDOS_FTP_USER }}
+          password: ${{ secrets.WEDOS_FTP_PASSWORD }}
+          local-dir: ./akce-web/
+          server-dir: ${{ vars.AKCE_SERVER_DIR }}
+          exclude: |
+            **/README.md
+            **/.git*
+            **/.git*/**
