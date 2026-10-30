@@ -14,7 +14,7 @@ lead.php          endpoint: lead → Google tabulka (Apps Script), záloha Ecoma
 kariera-config.example.php  vzor konfigurace (na serveru jako kariera-config.php)
 ```
 
-Další pozice (konzultant, makléř, asistent): zkopírovat `manazer.html`, upravit texty
+Další pozice (koncipient, asistent prodeje): zkopírovat `manazer.html`, upravit texty
 a `data-source` na formuláři, v `index.html` přepnout odkaz z `#kontakt` na nový soubor.
 
 ## Co zbývá
