@@ -14,6 +14,9 @@ investování do nemovitostí. Hostováno na Wedosu, nahráváno přes FTP.
   Akce proběhla, takže `index.html` je teď stránka „proběhlo“ (sítě + CTA na
   minikurz). Plná registrace (dotazník, `dekujeme.html`, `registrace.php`)
   je uložená jako šablona v `../templates/akce/`, včetně návodu na další akci.
+- `renta_11_2026/` — registrace na akci „Švýcarská renta a daňové úlevy při
+  investování“ (26. 11. 2026), na pozvání jako minule. Partneři EnCor Asset
+  Management a BNP Paribas Asset Management.
 
 ## Registrační stránky na akce
 
