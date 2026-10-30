@@ -17,6 +17,23 @@ kariera-config.example.php  vzor konfigurace (na serveru jako kariera-config.php
 Další pozice (koncipient, asistent prodeje): zkopírovat `manazer.html`, upravit texty
 a `data-source` na formuláři, v `index.html` přepnout odkaz z `#kontakt` na nový soubor.
 
+## Lokální stage
+
+Web s funkčním formulářem a falešnou tabulkou místo Apps Scriptu:
+
+```bash
+dev/kariera-stage/stage.sh
+```
+
+(z kořene repa, nebo v aplikaci jako preview `kariera-stage`)
+
+- web: http://127.0.0.1:8096/ – leady jdou přes skutečný `lead.php`
+- tabulka: http://127.0.0.1:8097/ – přijaté leady (data v `dev/kariera-stage/leady.csv`)
+- výpadek tabulky: `touch dev/kariera-stage/FAIL`, zpět `rm dev/kariera-stage/FAIL`
+
+Skript při prvním spuštění založí `kariera-web/kariera-config.php` se stage hodnotami
+(gitignored). Na server ho nenahrávat – tam patří skutečný config.
+
 ## Co zbývá
 
 1. **Formulář → Google Sheet.** Formulář posílá na `lead.php`, ten lead zapíše
