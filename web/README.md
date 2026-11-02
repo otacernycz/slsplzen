@@ -6,7 +6,9 @@ investování do nemovitostí. Hostováno na Wedosu, nahráváno přes FTP.
 ## Struktura
 
 - `index.html` — vlastní landing page
-- `subscribe.php` — zpracuje formulář a přihlásí kontakt do Ecomailu
+- `subscribe.php` — zpracuje formulář, přihlásí kontakt do Ecomailu (spustí
+  minikurz) a zapíše lead do pracovní tabulky `sls_minikurz_leady_pracovni`
+  (`MINIKURZ_SHEET_WEBHOOK`, skript v `../apps-script/minikurz-leady.gs`)
 - `ecomail-config.example.php` — vzor konfigurace; zkopírovat na serveru
   do `ecomail-config.php` a doplnit reálný API klíč
 - `assets/`, `fonts/`, `infografiky/` — statická media

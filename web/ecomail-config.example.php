@@ -22,3 +22,9 @@ define('ECOMAIL_EVENT_LIST_ID', '');
 // token, který musí sedět s WEB_TOKEN ve skriptu. Do gitu nikdy nedávat.
 define('EVENT_SHEET_WEBHOOK', '');
 define('EVENT_SHEET_TOKEN', '');
+
+// Nepovinné: zápis přihlášek do minikurzu do pracovní tabulky
+// sls_minikurz_leady_pracovni + notifikace. Skript: apps-script/minikurz-leady.gs,
+// token musí sedět s vlastností WEB_TOKEN ve skriptu. Do gitu nikdy nedávat.
+define('MINIKURZ_SHEET_WEBHOOK', '');
+define('MINIKURZ_SHEET_TOKEN', '');

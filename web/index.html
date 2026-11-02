@@ -602,6 +602,7 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
     // Submitted server-side (subscribe.php) so we get a real answer back —
     // a client-side POST straight to Ecomail can be silently dropped by
     // ad blockers, browser tracking protection, or a flaky connection.
+    var params = new URLSearchParams(window.location.search);
     var body = new URLSearchParams();
     body.append('name', name);
     body.append('email', email);
@@ -610,6 +611,8 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
     // Reuses the existing "cil" field / Ecomail CIL merge field so subscribe.php
     // and the Ecomail integration don't need to change.
     body.append('cil', answers.zajmy.join('; '));
+    body.append('zdroj', params.get('utm_source') || '');
+    body.append('kampan', params.get('utm_campaign') || '');
 
     fetch(form.action, {
       method: 'POST',

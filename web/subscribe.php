@@ -30,6 +30,8 @@ $phone = preg_replace('/[^0-9+]/', '', field('phone'));
 $zkusenosti = field('zkusenosti');
 $cil = field('cil');
 $castka = field('castka');
+$zdroj = mb_substr(field('zdroj'), 0, 60);
+$kampan = mb_substr(field('kampan'), 0, 100);
 
 if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($phone) < 9) {
     respond(422, false, 'Vyplňte prosím jméno, platný e-mail a telefon.');
@@ -73,14 +75,48 @@ $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $curlError = curl_error($ch);
 curl_close($ch);
 
-if ($response === false) {
-    error_log('subscribe.php: Ecomail request failed - ' . $curlError);
-    respond(502, false, 'Nepodařilo se spojit s Ecomailem. Zkuste to prosím znovu.');
+$ecomailOk = $response !== false && $httpCode >= 200 && $httpCode < 300;
+if (!$ecomailOk) {
+    error_log('subscribe.php: Ecomail failed - HTTP ' . $httpCode . ' ' . $curlError . ' ' . (string) $response);
 }
 
-if ($httpCode >= 200 && $httpCode < 300) {
+/* ---------- Pracovní tabulka (Google Apps Script) ---------- */
+// MINIKURZ_SHEET_WEBHOOK + MINIKURZ_SHEET_TOKEN v ecomail-config.php, skript
+// je v apps-script/minikurz-leady.gs. Zapisuje se vždy, i když Ecomail selže —
+// lead pak v tabulce nese poznámku, že kurz neodešel.
+$sheetOk = false;
+if (defined('MINIKURZ_SHEET_WEBHOOK') && (string) MINIKURZ_SHEET_WEBHOOK !== '') {
+    $ch = curl_init((string) MINIKURZ_SHEET_WEBHOOK);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode([
+            'token' => defined('MINIKURZ_SHEET_TOKEN') ? (string) MINIKURZ_SHEET_TOKEN : '',
+            'name' => $name,
+            'email' => $email,
+            'phone' => $phone,
+            'zkusenosti' => $zkusenosti,
+            'zajmy' => $cil,
+            'zdroj' => $zdroj,
+            'kampan' => $kampan,
+            'poznamka' => $ecomailOk ? '' : 'Ecomail selhal – minikurz neodešel, přidat ručně',
+        ], JSON_UNESCAPED_UNICODE),
+        CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+        CURLOPT_FOLLOWLOCATION => true, // Apps Script odpovídá přesměrováním
+        CURLOPT_CONNECTTIMEOUT => 5,
+        CURLOPT_TIMEOUT => 20,
+    ]);
+    $sheetResponse = curl_exec($ch);
+    $sheetCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    $sheetData = is_string($sheetResponse) ? json_decode($sheetResponse, true) : null;
+    $sheetOk = $sheetCode >= 200 && $sheetCode < 300 && is_array($sheetData) && !empty($sheetData['ok']);
+    if (!$sheetOk) {
+        error_log('subscribe.php: sheet webhook failed - HTTP ' . $sheetCode . ' ' . (string) $sheetResponse);
+    }
+}
+
+if ($ecomailOk || $sheetOk) {
     respond(200, true);
 }
-
-error_log('subscribe.php: Ecomail returned HTTP ' . $httpCode . ' - ' . $response);
 respond(502, false, 'Přihlášení se nepodařilo uložit. Zkuste to prosím znovu, nebo nám napište.');
