@@ -41,12 +41,19 @@ $nameParts = preg_split('/\s+/', $name, 2);
 $firstName = $nameParts[0];
 $surname = $nameParts[1] ?? '';
 
+// Štítky: „minikurz“ jednoznačně odliší přihlášky do kurzu od registrací
+// z akcí (ty jdou do stejného seznamu jen jako záloha), „web“ zdroj a UTM.
+$tags = ['minikurz', 'web'];
+if ($zdroj !== '') $tags[] = 'zdroj-' . preg_replace('/[^a-z0-9-]/', '', strtolower($zdroj));
+if ($kampan !== '') $tags[] = 'kampan-' . preg_replace('/[^a-z0-9-]/', '', strtolower(str_replace('_', '-', $kampan)));
+
 $payload = [
     'subscriber_data' => [
         'email' => $email,
         'name' => $firstName,
         'surname' => $surname,
         'phone' => $phone,
+        'tags' => $tags,
         'custom_fields' => [
             'ZKUSENOSTI' => $zkusenosti,
             'CIL' => $cil,
