@@ -175,9 +175,11 @@ function upsert_(lead) {
   }
 
   if (found === -1) {
-    var row = [lead.date, lead.name, lead.phone, lead.email, lead.zk.join('; '),
+    var row = [lead.date, lead.name, text_(lead.phone), lead.email, lead.zk.join('; '),
       lead.zaj.join('; '), lead.zdroj, 'Nový', lead.poznamka, lead.id];
     sh.appendRow(row);
+    sh.getRange(sh.getLastRow(), 1).setNumberFormat('d. M. yyyy H:mm');
+    row[C.TEL] = lead.phone;
     notify_(row);
     return { isNew: true, id: lead.id };
   }
@@ -185,6 +187,7 @@ function upsert_(lead) {
   var v = values[found];
   if (!v[C.JMENO]) v[C.JMENO] = lead.name;
   if (!v[C.TEL]) v[C.TEL] = lead.phone;
+  v[C.TEL] = text_(v[C.TEL]);
   if (!v[C.EMAIL]) v[C.EMAIL] = lead.email;
   v[C.ZK] = merge_(v[C.ZK], lead.zk);
   v[C.ZAJ] = merge_(v[C.ZAJ], lead.zaj);
@@ -229,6 +232,12 @@ function metaValue_(v) {
     if (WEB_VALUES[i].toLowerCase() === lower) return WEB_VALUES[i];
   }
   return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+// „+420 …“ by Tabulky vzaly jako vzorec (#ERROR!) — apostrof vynutí text.
+function text_(v) {
+  v = String(v || '');
+  return /^[+=-]/.test(v) ? "'" + v : v;
 }
 
 function digits9_(phone) {
