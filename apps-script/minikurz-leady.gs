@@ -7,6 +7,10 @@
  *      - NOTIFY_EMAIL (adresy oddělené čárkou)
  *      - META_SHEET_ID (ID surové tabulky, do které Meta sama zapisuje leady
  *        z rychlého formuláře — z URL .../spreadsheets/d/{ID}/edit)
+ *      - META_FORM_IDS (nepovinné; ID Meta formulářů minikurzu oddělená
+ *        čárkou, např. f:1071408272074327). Bez něj se berou jen řádky,
+ *        jejichž form_name obsahuje „minikurz“ — ostatní kampaně (třeba
+ *        spotřebáky) ve stejné surové tabulce se ignorují.
  *   2. Jednou spustit setup() — připraví hlavičku, šířky a rozbalovací stav.
  *   3. Jednou spustit installTrigger() — každých 5 minut přenese nové
  *      Meta leady ze surové tabulky (syncMeta).
@@ -125,13 +129,22 @@ function syncMeta() {
     var iPlat = col(function (x) { return x === 'platform'; });
     var iZk = col(function (x) { return x.indexOf('zkusenost') !== -1; });
     var iZaj = col(function (x) { return /(^|\|)cil(\||$)|zájem|zajem|informace/.test(x); });
+    var iFormId = col(function (x) { return x === 'form_id'; });
+    var iFormName = col(function (x) { return x === 'form_name'; });
+    var formIds = String(props.getProperty('META_FORM_IDS') || '').split(',')
+      .map(function (x) { return x.trim(); }).filter(String);
+    var isMinikurz = function (row) {
+      if (formIds.length && iFormId !== -1) return formIds.indexOf(String(row[iFormId]).trim()) !== -1;
+      if (iFormName !== -1) return /minikurz/i.test(String(row[iFormName]));
+      return true;
+    };
     if (iId === -1 || iEmail === -1) throw new Error('Surová Meta tabulka nemá sloupce id / email.');
 
     var done = knownIds_();
     for (var r = 1; r < raw.length; r++) {
       var row = raw[r];
       var id = String(row[iId]).trim();
-      if (!id || done[id]) continue;
+      if (!id || done[id] || !isMinikurz(row)) continue;
       var email = String(row[iEmail]).trim();
       if (email === 'test@meta.com' || /<test lead/.test(row.join(' '))) continue;
 
