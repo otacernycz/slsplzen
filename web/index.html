@@ -115,17 +115,31 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
 .header-link { font-size: 15px; font-weight: 600; border-bottom: 1px solid var(--red); padding-bottom: 2px; white-space: nowrap; }
 
 /* Hero */
-.hero { position: relative; border-bottom: 1px solid var(--line); overflow: hidden; }
-.hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: right center; }
-.hero-scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.72) 45%, rgba(255,255,255,0) 100%); }
-.hero-inner { position: relative; padding-top: clamp(56px, 9vw, 96px); padding-bottom: clamp(64px, 10vw, 104px); }
-.hero-copy { max-width: 640px; display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
-.hero-copy h1 { font-size: clamp(38px, 5vw, 58px); line-height: 1.12; letter-spacing: -0.01em; }
-.hero-copy .lead { margin: 0; font-size: 19px; line-height: 1.55; color: var(--grey-1); max-width: 520px; }
-.hero-cta-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-top: 8px; }
-.btn-primary { display: inline-flex; align-items: center; gap: 10px; background: var(--red); color: #FFFFFF; font-size: 16px; font-weight: 600; padding: 15px 32px; border-radius: 2px; border: none; cursor: pointer; font-family: var(--sans); transition: background 200ms var(--ease); }
-.btn-primary:hover { background: var(--red-dark); color: #FFFFFF; }
-.hero-note { font-size: 14px; color: var(--grey-2); }
+.hero { position: relative; overflow: hidden; background: #F1EBE9; border-bottom: 1px solid var(--line); }
+.hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: right bottom; }
+.hero-inner { position: relative; padding-top: clamp(48px, 8vw, 96px); padding-bottom: clamp(56px, 9vw, 104px); }
+.hero-copy { max-width: min(560px, 48%); display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
+.hero-copy h1 { font-size: clamp(36px, 5vw, 60px); line-height: 1.1; letter-spacing: -0.01em; text-wrap: balance; }
+.hero-copy .lead { margin: 0; font-size: 18px; line-height: 28px; color: var(--grey-1); max-width: 540px; text-wrap: pretty; }
+.hero-checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.hero-checks li { display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 24px; color: var(--ink); }
+.hero-checks svg { flex: none; margin-top: 4px; }
+.hero-cta-row { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin-top: 8px; }
+.btn-primary { display: inline-flex; align-items: center; gap: 12px; background: var(--red); color: #FFFFFF; font-size: 18px; line-height: 28px; font-weight: 600; padding: 16px 32px; border-radius: 2px; border: none; cursor: pointer; font-family: var(--sans); transition: background 300ms var(--ease), transform 300ms var(--ease); }
+.btn-primary:hover { background: var(--red-dark); color: #FFFFFF; transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(1px); }
+.btn-primary:focus-visible, .btn-ghost:focus-visible, .btn-accept:focus-visible, .faq summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.hero-note { font-size: 14px; line-height: 20px; color: var(--grey-2); }
+.hero-proof { display: flex; align-items: center; gap: 12px; padding-top: 24px; border-top: 1px solid rgba(51,51,51,0.12); font-size: 14px; line-height: 20px; color: var(--grey-1); max-width: 540px; }
+.hero-proof strong { color: var(--ink); font-weight: 600; }
+/* Na užším displeji se ilustrace nevejde vedle textu: jde pod text přes celou šířku. */
+@media (max-width: 899px) {
+  .hero { display: flex; flex-direction: column; }
+  .hero-inner { padding-bottom: 32px; }
+  .hero-copy { max-width: 600px; }
+  .hero-bg { order: 2; position: static; display: block; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: 80% bottom; }
+}
+@media (max-width: 599px) { .btn-primary { width: 100%; justify-content: center; } .hero-cta-row { align-self: stretch; } }
 
 /* Course content */
 .course { padding-top: clamp(56px, 8vw, 88px); padding-bottom: clamp(48px, 7vw, 72px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: clamp(32px, 5vw, 64px); align-items: start; }
@@ -201,6 +215,54 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
 .stat-num { font-family: var(--serif); font-size: 34px; line-height: 1; color: var(--ink); }
 .stat-cap { font-size: 14px; color: var(--grey-2); }
 
+/* Infographics preview */
+.extras { background: var(--wash); border-top: 1px solid var(--line); }
+.extras-inner { padding-top: clamp(48px, 7vw, 80px); padding-bottom: clamp(48px, 7vw, 80px); display: flex; flex-direction: column; gap: 32px; }
+.extras-head { display: flex; flex-direction: column; gap: 12px; max-width: 640px; }
+.extras-head h2 { font-size: clamp(30px, 4vw, 36px); line-height: 1.15; text-wrap: balance; }
+.extras-head p { margin: 0; font-size: 16px; line-height: 24px; color: var(--grey-1); text-wrap: pretty; }
+.extras-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 24px; }
+.extra { margin: 0; background: #FFFFFF; border: 1px solid var(--line); border-radius: 12px; padding: 8px; display: flex; flex-direction: column; gap: 12px; }
+.extra img { width: 100%; height: auto; border-radius: 4px; }
+.extra figcaption { padding: 0 8px 8px; font-size: 14px; line-height: 20px; color: var(--grey-1); }
+.extra figcaption strong { display: block; color: var(--ink); font-weight: 600; font-size: 16px; line-height: 24px; }
+
+/* Tagline reveal */
+.tagline { padding-top: clamp(64px, 10vw, 128px); padding-bottom: clamp(64px, 10vw, 128px); }
+.tagline p { margin: 0; max-width: 880px; font-family: var(--serif); font-style: italic; font-size: clamp(30px, 4.4vw, 48px); line-height: 1.25; color: var(--ink); text-wrap: balance; }
+.tagline .w { color: rgba(51,51,51,0.28); transition: color 600ms cubic-bezier(0.22, 1, 0.36, 1); }
+.tagline .w.on { color: var(--ink); }
+.tagline .w.accent.on { color: var(--red); }
+.reduced-motion .tagline .w, .no-io .tagline .w { color: var(--ink); }
+
+/* FAQ */
+.faq-wrap { border-top: 1px solid var(--line); }
+.faq-inner { padding-top: clamp(48px, 7vw, 80px); padding-bottom: clamp(48px, 7vw, 80px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: clamp(32px, 5vw, 64px); align-items: start; }
+.faq-intro { display: flex; flex-direction: column; gap: 16px; }
+.faq-intro h2 { font-size: clamp(30px, 4vw, 36px); line-height: 1.15; }
+.faq-intro p { margin: 0; font-size: 16px; line-height: 24px; color: var(--grey-1); }
+.faq-list { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.faq { border-bottom: 1px solid var(--line); }
+.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 24px 0; font-size: 18px; line-height: 28px; font-weight: 600; color: var(--ink); }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary svg { flex: none; transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1); }
+.faq[open] summary svg { transform: rotate(45deg); }
+.faq summary:hover { color: var(--red); }
+.faq p { margin: 0; padding: 0 0 24px; font-size: 16px; line-height: 24px; color: var(--grey-1); max-width: 620px; text-wrap: pretty; }
+
+/* Final CTA */
+.final { background: var(--ink); }
+.final-inner { padding-top: clamp(48px, 7vw, 80px); padding-bottom: clamp(48px, 7vw, 80px); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 24px; }
+.final h2 { color: #FFFFFF; font-size: clamp(30px, 4vw, 36px); line-height: 1.2; max-width: 680px; text-wrap: balance; }
+.final p { margin: 0; color: #D2D2D2; font-size: 16px; line-height: 24px; max-width: 520px; }
+.final .hero-note { color: #B4B4B4; }
+
+/* Mobile sticky CTA */
+.sticky-cta { position: fixed; left: 0; right: 0; bottom: 0; z-index: 150; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.96); border-top: 1px solid var(--line); box-shadow: 0 -4px 16px rgba(0,0,0,0.06); transform: translateY(110%); transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1); }
+.sticky-cta.visible { transform: translateY(0); }
+.sticky-cta .btn-primary { width: 100%; justify-content: center; font-size: 16px; line-height: 24px; padding: 12px 24px; }
+@media (min-width: 768px) { .sticky-cta { display: none; } }
+
 /* Footer */
 .footer { background: var(--wash); border-top: 1px solid var(--line); }
 .footer-inner { padding-top: clamp(40px, 6vw, 56px); }
@@ -241,22 +303,29 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
 <div class="header-wrap">
   <header class="container header">
     <a href="/" aria-label="Investiční minikurz — domů"><img src="assets/logo/swisslife-select.svg" alt="Swiss Life Select"></a>
-    <a class="header-link" href="#prihlaseni">Přihlásit se do kurzu</a>
+    <a class="header-link" href="#prihlaseni">Chci minikurz zdarma</a>
   </header>
 </div>
 
 <!-- HERO -->
 <section class="hero">
-  <img class="hero-photo" src="assets/photos/hero-ilustrace.jpg" alt="">
-  <div class="hero-scrim"></div>
+  <img class="hero-bg" src="assets/photos/hero-minikurz-wide.jpg" alt="" width="2000" height="857" fetchpriority="high">
   <div class="container hero-inner">
     <div class="hero-copy">
       <div class="eyebrow hero-anim">Bezplatný e-mailový minikurz</div>
-      <h1 class="hero-anim d1">Investování do nemovitostí srozumitelně. Za pět dní.</h1>
-      <p class="lead hero-anim d2">Pět krátkých, praktických e-mailů pro každého, kdo uvažuje o investiční nemovitosti — nebo chce, aby ta jeho skutečně vydělávala. Každý den jedno téma, které rozhoduje o úspěchu celé investice.</p>
+      <h1 class="hero-anim d1">Investování do nemovitostí srozumitelně. Za&nbsp;pět&nbsp;dní.</h1>
+      <p class="lead hero-anim d2">Pět krátkých e-mailů o tom, jak vybrat byt, prověřit nájemníka, snížit daň a spočítat výnos, který vám opravdu zůstane.</p>
+      <ul class="hero-checks hero-anim d2">
+        <li><svg width="16" height="16" viewBox="0 0 256 256" fill="#D82034" aria-hidden="true"><path d="M229.66 77.66l-128 128a8 8 0 0 1-11.32 0l-56-56a8 8 0 0 1 11.32-11.32L96 188.69 218.34 66.34a8 8 0 0 1 11.32 11.32Z"/></svg>První díl máte v e-mailu hned druhý den ráno</li>
+        <li><svg width="16" height="16" viewBox="0 0 256 256" fill="#D82034" aria-hidden="true"><path d="M229.66 77.66l-128 128a8 8 0 0 1-11.32 0l-56-56a8 8 0 0 1 11.32-11.32L96 188.69 218.34 66.34a8 8 0 0 1 11.32 11.32Z"/></svg>Každý díl přečtete za pět minut, k němu infografika</li>
+        <li><svg width="16" height="16" viewBox="0 0 256 256" fill="#D82034" aria-hidden="true"><path d="M229.66 77.66l-128 128a8 8 0 0 1-11.32 0l-56-56a8 8 0 0 1 11.32-11.32L96 188.69 218.34 66.34a8 8 0 0 1 11.32 11.32Z"/></svg>Zdarma, odhlásíte se jedním kliknutím</li>
+      </ul>
       <div class="hero-cta-row hero-anim d3">
-        <a class="btn-primary" href="#prihlaseni">Chci se přihlásit <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
-        <span class="hero-note">Zdarma · 5 e-mailů · kdykoliv se odhlásíte</span>
+        <a class="btn-primary" href="#prihlaseni">Chci minikurz zdarma <svg width="18" height="18" viewBox="0 0 256 256" fill="#FFFFFF" aria-hidden="true"><path d="M221.66 133.66l-72 72a8 8 0 0 1-11.32-11.32L196.69 136H40a8 8 0 0 1 0-16h156.69l-58.35-58.34a8 8 0 0 1 11.32-11.32l72 72a8 8 0 0 1 0 11.32Z"/></svg></a>
+        <span class="hero-note">Přihlášení zabere asi minutu.</span>
+      </div>
+      <div class="hero-proof hero-anim d3">
+        <span>Připravil tým <strong>Swiss Life Select Plzeň</strong>, součást švýcarské Swiss Life Group s více než 165letou historií.</span>
       </div>
     </div>
   </div>
@@ -308,6 +377,36 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
   </div>
 </section>
 
+<!-- WHAT YOU GET -->
+<section class="extras">
+  <div class="container extras-inner">
+    <div class="extras-head reveal">
+      <div class="eyebrow">Co v e-mailech najdete</div>
+      <h2>Ke každému dílu přehledná infografika</h2>
+      <p>Shrnutí na jedné stránce, které si uložíte do telefonu a vrátíte se k němu, až budete konkrétní byt opravdu řešit. Tady jsou tři z pěti.</p>
+    </div>
+    <div class="extras-grid">
+      <figure class="extra reveal">
+        <img src="assets/infografiky/sls_plzen_vynosy_rizika.jpg" alt="Infografika: porovnání výnosu a rizika bytu ve větším a menším městě" width="960" height="640" loading="lazy">
+        <figcaption><strong>Výnosy a rizika</strong>Proč dva podobné byty vydělávají úplně jinak.</figcaption>
+      </figure>
+      <figure class="extra reveal">
+        <img src="assets/infografiky/sls_plzen_najemnik.jpg" alt="Infografika: jak vybrat a prověřit nájemníka" width="960" height="640" loading="lazy">
+        <figcaption><strong>Výběr nájemníka</strong>Co si u zájemce ověřit, než podepíšete smlouvu.</figcaption>
+      </figure>
+      <figure class="extra reveal">
+        <img src="assets/infografiky/sls_plzen_dane.jpg" alt="Infografika: zdanění příjmu z pronájmu" width="960" height="640" loading="lazy">
+        <figcaption><strong>Daně z pronájmu</strong>Výdaje, paušál a odpisy přehledně vedle sebe.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- TAGLINE -->
+<section class="container tagline">
+  <p data-words>Výnos z inzerátu není výnos, který vám zůstane. Za pět dní budete vědět, jak spočítat <span class="accent">ten skutečný.</span></p>
+</section>
+
 <!-- USP -->
 <section class="usps-wrap">
   <div class="container usps">
@@ -325,6 +424,27 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
       <div class="usp-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D82034" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></div>
       <div class="usp-title">Zdarma a bez závazků</div>
       <p>Kurz připravil tým Swiss Life Select Plzeň — Lochotínská. Nic nekupujete a z odběru se můžete kdykoliv odhlásit.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHO WE ARE -->
+<section class="container about">
+  <div class="about-copy reveal">
+    <div class="eyebrow">Kdo kurz připravil</div>
+    <h2>Tým Swiss Life Select Plzeň — Lochotínská</h2>
+    <p>Jsme součástí Swiss Life Group — švýcarské finanční skupiny s více než 165letou historií. Klientům pomáháme s investicemi, financováním i správou nemovitostí pod jednou střechou. Konzultace u nás je vždy nezávazná.</p>
+  </div>
+  <div class="stats reveal">
+    <div class="stat">
+      <div class="stat-rule"></div>
+      <div class="stat-num">165+</div>
+      <div class="stat-cap">let zkušeností</div>
+    </div>
+    <div class="stat">
+      <div class="stat-rule"></div>
+      <div class="stat-num">4 mil.</div>
+      <div class="stat-cap">klientů po celém světě</div>
     </div>
   </div>
 </section>
@@ -410,26 +530,52 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
   </div>
 </section>
 
-<!-- WHO WE ARE -->
-<section class="container about">
-  <div class="about-copy reveal">
-    <div class="eyebrow">Kdo kurz připravil</div>
-    <h2>Tým Swiss Life Select Plzeň — Lochotínská</h2>
-    <p>Jsme součástí Swiss Life Group — švýcarské finanční skupiny s více než 165letou historií. Klientům pomáháme s investicemi, financováním i správou nemovitostí pod jednou střechou. Konzultace u nás je vždy nezávazná.</p>
-  </div>
-  <div class="stats reveal">
-    <div class="stat">
-      <div class="stat-rule"></div>
-      <div class="stat-num">165+</div>
-      <div class="stat-cap">let zkušeností</div>
+<!-- FAQ -->
+<section class="faq-wrap">
+  <div class="container faq-inner">
+    <div class="faq-intro reveal">
+      <div class="eyebrow">Časté otázky</div>
+      <h2>Než se přihlásíte</h2>
+      <p>Co lidé nejčastěji řeší, než se do minikurzu přihlásí.</p>
     </div>
-    <div class="stat">
-      <div class="stat-rule"></div>
-      <div class="stat-num">4 mil.</div>
-      <div class="stat-cap">klientů po celém světě</div>
+    <div class="faq-list reveal">
+      <details class="faq">
+        <summary>Je kurz opravdu zdarma?<svg width="20" height="20" viewBox="0 0 256 256" fill="#D82034" aria-hidden="true"><path d="M224 128a8 8 0 0 1-8 8h-80v80a8 8 0 0 1-16 0v-80H40a8 8 0 0 1 0-16h80V40a8 8 0 0 1 16 0v80h80a8 8 0 0 1 8 8Z"/></svg></summary>
+        <p>Ano. Nic neplatíte, nic se nekupuje a k ničemu se nezavazujete. Kurz je naše ukázka toho, jak o investičních nemovitostech přemýšlíme.</p>
+      </details>
+      <details class="faq">
+        <summary>Kdy mi přijde první díl?<svg width="20" height="20" viewBox="0 0 256 256" fill="#D82034" aria-hidden="true"><path d="M224 128a8 8 0 0 1-8 8h-80v80a8 8 0 0 1-16 0v-80H40a8 8 0 0 1 0-16h80V40a8 8 0 0 1 16 0v80h80a8 8 0 0 1 8 8Z"/></svg></summary>
+        <p>Druhý den ráno. Hned po přihlášení vám přijde uvítací e-mail s plánem celého kurzu, a pokud ho do pár minut nevidíte, podívejte se do složky Hromadné nebo Spam. Další díly chodí jednou denně, celý kurz tak máte za pět dní.</p>
+      </details>
+      <details class="faq">
+        <summary>Pro koho je kurz určený?<svg width="20" height="20" viewBox="0 0 256 256" fill="#D82034" aria-hidden="true"><path d="M224 128a8 8 0 0 1-8 8h-80v80a8 8 0 0 1-16 0v-80H40a8 8 0 0 1 0-16h80V40a8 8 0 0 1 16 0v80h80a8 8 0 0 1 8 8Z"/></svg></summary>
+        <p>Pro každého, kdo o investiční nemovitosti uvažuje, i pro ty, kdo už byt pronajímají a chtějí vědět, kolik jim doopravdy vydělává. Žádné předchozí znalosti nepotřebujete.</p>
+      </details>
+      <details class="faq">
+        <summary>Musím mít naspořeno na byt?<svg width="20" height="20" viewBox="0 0 256 256" fill="#D82034" aria-hidden="true"><path d="M224 128a8 8 0 0 1-8 8h-80v80a8 8 0 0 1-16 0v-80H40a8 8 0 0 1 0-16h80V40a8 8 0 0 1 16 0v80h80a8 8 0 0 1 8 8Z"/></svg></summary>
+        <p>Ne. Kurz vám pomůže posoudit, jestli a kdy dává investiční nemovitost smysl právě pro vás, ještě než začnete cokoliv řešit.</p>
+      </details>
+      <details class="faq">
+        <summary>Jak se z odběru odhlásím?<svg width="20" height="20" viewBox="0 0 256 256" fill="#D82034" aria-hidden="true"><path d="M224 128a8 8 0 0 1-8 8h-80v80a8 8 0 0 1-16 0v-80H40a8 8 0 0 1 0-16h80V40a8 8 0 0 1 16 0v80h80a8 8 0 0 1 8 8Z"/></svg></summary>
+        <p>Každý e-mail má v patičce odkaz pro odhlášení. Stačí na něj kliknout a žádné další e-maily vám už nepřijdou.</p>
+      </details>
     </div>
   </div>
 </section>
+
+<!-- FINAL CTA -->
+<section class="final">
+  <div class="container final-inner reveal">
+    <h2>Přihlaste se dnes a zítra ráno máte první díl</h2>
+    <p>Pět krátkých e-mailů, pět infografik a jasnější představa o tom, jestli je investiční nemovitost pro vás.</p>
+    <a class="btn-primary" href="#prihlaseni">Chci minikurz zdarma <svg width="18" height="18" viewBox="0 0 256 256" fill="#FFFFFF" aria-hidden="true"><path d="M221.66 133.66l-72 72a8 8 0 0 1-11.32-11.32L196.69 136H40a8 8 0 0 1 0-16h156.69l-58.35-58.34a8 8 0 0 1 11.32-11.32l72 72a8 8 0 0 1 0 11.32Z"/></svg></a>
+    <span class="hero-note">Zdarma · 5 e-mailů · odhlášení jedním kliknutím</span>
+  </div>
+</section>
+
+<div class="sticky-cta" id="sticky-cta" aria-hidden="true">
+  <a class="btn-primary" href="#prihlaseni" tabindex="-1">Chci minikurz zdarma</a>
+</div>
 
 <!-- FOOTER -->
 <footer class="footer">
@@ -639,6 +785,56 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
   });
 
   render();
+
+  /* ---------- Tagline: slova se rozsvěcují postupně při scrollu ---------- */
+  var tagline = document.querySelector('[data-words]');
+  var motionOk = !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) && 'IntersectionObserver' in window;
+  if (tagline && motionOk) {
+    var wrap = function (node, accent) {
+      node.textContent.split(/(\s+)/).forEach(function (part) {
+        if (!part) return;
+        if (/^\s+$/.test(part)) { node.parentNode.insertBefore(document.createTextNode(part), node); return; }
+        var w = document.createElement('span');
+        w.className = 'w' + (accent ? ' accent' : '');
+        w.textContent = part;
+        node.parentNode.insertBefore(w, node);
+      });
+      node.parentNode.removeChild(node);
+    };
+    Array.prototype.slice.call(tagline.childNodes).forEach(function (n) {
+      if (n.nodeType === 3) wrap(n, false);
+      else if (n.firstChild) { wrap(n.firstChild, true); }
+    });
+    var words = tagline.querySelectorAll('.w');
+    var ticking = false;
+    var paint = function () {
+      ticking = false;
+      var line = (window.innerHeight || 800) * 0.72;
+      words.forEach(function (w) { if (w.getBoundingClientRect().top < line) w.classList.add('on'); });
+      if (tagline.querySelectorAll('.w:not(.on)').length === 0) window.removeEventListener('scroll', onScroll);
+    };
+    var onScroll = function () { if (!ticking) { ticking = true; requestAnimationFrame(paint); } };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    paint();
+  }
+
+  /* ---------- Mobilní lišta s CTA: jen mimo hero a formulář ---------- */
+  var sticky = document.getElementById('sticky-cta');
+  if (sticky && 'IntersectionObserver' in window) {
+    var hidden = { hero: true, form: false, final: false };
+    var update = function () {
+      var show = !hidden.hero && !hidden.form && !hidden.final && !cookiebar.classList.contains('visible');
+      sticky.classList.toggle('visible', show);
+    };
+    var watch = function (el, key) {
+      if (!el) return;
+      new IntersectionObserver(function (entries) { hidden[key] = entries[0].isIntersecting; update(); }).observe(el);
+    };
+    watch(document.querySelector('.hero'), 'hero');
+    watch(document.getElementById('prihlaseni'), 'form');
+    watch(document.querySelector('.final'), 'final');
+    ['cookies-accept', 'cookies-reject'].forEach(function (id) { document.getElementById(id).addEventListener('click', update); });
+  }
 
   /* ---------- Scroll reveal ---------- */
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;

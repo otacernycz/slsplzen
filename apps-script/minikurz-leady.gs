@@ -116,25 +116,36 @@ function syncMeta() {
   try {
     var raw = SpreadsheetApp.openById(rawId).getSheets()[0].getDataRange().getValues();
     if (raw.length < 2) return;
-    var h = raw[0].map(function (x) { return String(x).trim().toLowerCase(); });
-    var col = function (test) {
-      for (var i = 0; i < h.length; i++) if (test(h[i])) return i;
+    // Názvy sloupců bez diakritiky a oddělovačů: „telefonní__číslo“ → „telefonnicislo“,
+    // „e-mail“ → „email“, „*|zkusenosti|*“ → „zkusenosti“.
+    var h = raw[0].map(function (x) {
+      return String(x).trim().toLowerCase().normalize('NFD').replace(/[^a-z0-9]/g, '');
+    });
+    var col = function () {
+      var names = Array.prototype.slice.call(arguments);
+      for (var i = 0; i < h.length; i++) if (names.indexOf(h[i]) !== -1) return i;
       return -1;
     };
-    var iId = col(function (x) { return x === 'id'; });
-    var iTime = col(function (x) { return x === 'created_time'; });
-    var iName = col(function (x) { return x === 'name' || x === 'full_name'; });
-    var iEmail = col(function (x) { return x === 'email'; });
-    var iPhone = col(function (x) { return x === 'phone' || x === 'phone_number'; });
-    var iPlat = col(function (x) { return x === 'platform'; });
-    var iZk = col(function (x) { return x.indexOf('zkusenost') !== -1; });
-    var iZaj = col(function (x) { return /(^|\|)cil(\||$)|zájem|zajem|informace/.test(x); });
-    var iFormId = col(function (x) { return x === 'form_id'; });
-    var iFormName = col(function (x) { return x === 'form_name'; });
+    var iId = col('id');
+    var iTime = col('createdtime');
+    var iName = col('name', 'fullname', 'celejmeno');
+    var iFirst = col('firstname', 'jmeno');
+    var iLast = col('lastname', 'prijmeni');
+    var iEmail = col('email');
+    var iPhone = col('phone', 'phonenumber', 'telefon', 'telefonnicislo');
+    var iPlat = col('platform');
+    var iZk = h.findIndex(function (x) { return x.indexOf('zkusenost') !== -1; });
+    var iZaj = h.findIndex(function (x) { return x === 'cil' || /zajem|informace/.test(x); });
+    var iFormId = col('formid');
+    var iFormName = col('formname');
+    var iKampan = col('kampan');
+    var cell = function (row, i) { return i === -1 ? '' : String(row[i]).trim(); };
+    // ID formuláře se bere s i bez prefixu „f:“.
+    var bareId = function (x) { return String(x).trim().replace(/^f:/, ''); };
     var formIds = String(props.getProperty('META_FORM_IDS') || '').split(',')
-      .map(function (x) { return x.trim(); }).filter(String);
+      .map(bareId).filter(String);
     var isMinikurz = function (row) {
-      if (formIds.length && iFormId !== -1) return formIds.indexOf(String(row[iFormId]).trim()) !== -1;
+      if (formIds.length && iFormId !== -1) return formIds.indexOf(bareId(row[iFormId])) !== -1;
       if (iFormName !== -1) return /minikurz/i.test(String(row[iFormName]));
       return true;
     };
@@ -150,11 +161,13 @@ function syncMeta() {
 
       var created = iTime === -1 ? null : new Date(row[iTime]);
       var plat = iPlat === -1 ? '' : String(row[iPlat]).trim();
-      var zdrojMeta = 'Meta – okamžitý formulář' + (plat ? ' · ' + (PLATFORMY[plat] || plat) : '');
+      var kampan = cell(row, iKampan);
+      var zdrojMeta = 'Meta – okamžitý formulář' + (plat ? ' · ' + (PLATFORMY[plat] || plat) : '') +
+        (kampan ? ' · ' + kampan : '');
 
       upsert_({
         date: created && !isNaN(created) ? created : new Date(),
-        name: iName === -1 ? '' : String(row[iName]).trim(),
+        name: cell(row, iName) || [cell(row, iFirst), cell(row, iLast)].filter(String).join(' '),
         phone: formatPhone_(iPhone === -1 ? '' : String(row[iPhone]).replace(/^p:/, '')),
         email: email,
         zk: iZk === -1 ? [] : String(row[iZk]).split('|').map(metaValue_).filter(String),
