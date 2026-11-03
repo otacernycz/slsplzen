@@ -11,9 +11,15 @@
  *        čárkou, např. f:1071408272074327). Bez něj se berou jen řádky,
  *        jejichž form_name obsahuje „minikurz“ — ostatní kampaně (třeba
  *        spotřebáky) ve stejné surové tabulce se ignorují.
+ *      - ECOMAIL_API_KEY (stejný jako v ecomail-config.php) — syncMeta pak
+ *        Meta leady sám přihlásí do Ecomailu se štítkem „minikurz“, takže
+ *        jim automatizace spustí kurz. Přímé napojení Meta → Ecomail se
+ *        pak nepoužívá (bez štítku by je automatizace zařadila jinam).
+ *      - ECOMAIL_LIST_ID (nepovinné, výchozí 1)
  *   2. Jednou spustit setup() — připraví hlavičku, šířky a rozbalovací stav.
  *   3. Jednou spustit installTrigger() — každých 5 minut přenese nové
- *      Meta leady ze surové tabulky (syncMeta).
+ *      Meta leady ze surové tabulky (syncMeta). Po přidání ECOMAIL_API_KEY
+ *      jednou spustit syncMeta ručně, ať si vyžádá přístup k externím službám.
  *   4. Nasadit → Nová verze → Webová aplikace (spouštět jako já, přístup
  *      kdokoli). URL dát do MINIKURZ_SHEET_WEBHOOK v ecomail-config.php.
  *
@@ -108,12 +114,15 @@ function doPost(e) {
 
 function syncMeta() {
   var props = PropertiesService.getScriptProperties();
-  var rawId = props.getProperty('META_SHEET_ID');
+  // Bere i celý odkaz na tabulku, ne jen ID.
+  var rawId = String(props.getProperty('META_SHEET_ID') || '').trim()
+    .replace(/^.*\/spreadsheets\/d\/([^/?#]+).*$/, '$1');
   if (!rawId) return;
 
   var lock = LockService.getScriptLock();
   if (!lock.tryLock(20000)) return; // doběhne při dalším spuštění
   try {
+    retryEcomail_();
     var raw = SpreadsheetApp.openById(rawId).getSheets()[0].getDataRange().getValues();
     if (raw.length < 2) return;
     // Názvy sloupců bez diakritiky a oddělovačů: „telefonní__číslo“ → „telefonnicislo“,
@@ -165,7 +174,7 @@ function syncMeta() {
       var zdrojMeta = 'Meta – okamžitý formulář' + (plat ? ' · ' + (PLATFORMY[plat] || plat) : '') +
         (kampan ? ' · ' + kampan : '');
 
-      upsert_({
+      var lead = {
         date: created && !isNaN(created) ? created : new Date(),
         name: cell(row, iName) || [cell(row, iFirst), cell(row, iLast)].filter(String).join(' '),
         phone: formatPhone_(iPhone === -1 ? '' : String(row[iPhone]).replace(/^p:/, '')),
@@ -176,7 +185,22 @@ function syncMeta() {
         kind: 'meta',
         poznamka: '',
         id: id
-      });
+      };
+      // Kdo se už přihlásil přes web, minikurz v Ecomailu má.
+      var existing = findRow_(sheet_().getDataRange().getValues(), lead.email, lead.phone);
+      var viaWeb = existing && /web/i.test(String(existing[C.ZDROJ]));
+      if (!viaWeb) {
+        var payload = ecomailPayload_(lead, kampan);
+        if (!payload) {
+          lead.poznamka = 'Chybí ECOMAIL_API_KEY – minikurz neodešel, přidat ručně';
+        } else if (!ecomailSubscribe_(payload)) {
+          lead.poznamka = ECOMAIL_FAIL;
+          var pending = pending_();
+          pending[id] = payload;
+          savePending_(pending);
+        }
+      }
+      upsert_(lead);
       done[id] = true;
     }
   } finally {
@@ -190,15 +214,7 @@ function syncMeta() {
 function upsert_(lead) {
   var sh = sheet_();
   var values = sh.getDataRange().getValues();
-  var email = lead.email.toLowerCase();
-  var phone9 = digits9_(lead.phone);
-  var found = -1;
-  for (var r = 1; r < values.length && found === -1; r++) {
-    if (email && String(values[r][C.EMAIL]).trim().toLowerCase() === email) found = r;
-  }
-  for (r = 1; r < values.length && found === -1; r++) {
-    if (phone9 && digits9_(values[r][C.TEL]) === phone9) found = r;
-  }
+  var found = findIndex_(values, lead.email, lead.phone);
 
   if (found === -1) {
     var row = [lead.date, lead.name, text_(lead.phone), lead.email, lead.zk.join('; '),
@@ -225,6 +241,124 @@ function upsert_(lead) {
   // Datum a stav hovoru zůstávají — první kontakt rozhoduje.
   sh.getRange(found + 1, C.JMENO + 1, 1, HEADERS.length - 1).setValues([v.slice(1)]);
   return { isNew: false, id: lead.id };
+}
+
+// Řádek téhož člověka: podle e-mailu, a když nesedí, podle posledních 9 číslic telefonu.
+function findIndex_(values, email, phone) {
+  email = String(email || '').trim().toLowerCase();
+  var phone9 = digits9_(phone);
+  for (var r = 1; r < values.length; r++) {
+    if (email && String(values[r][C.EMAIL]).trim().toLowerCase() === email) return r;
+  }
+  for (r = 1; r < values.length; r++) {
+    if (phone9 && digits9_(values[r][C.TEL]) === phone9) return r;
+  }
+  return -1;
+}
+
+function findRow_(values, email, phone) {
+  var i = findIndex_(values, email, phone);
+  return i === -1 ? null : values[i];
+}
+
+/* ---------- Ecomail (Meta leady) ---------- */
+
+var ECOMAIL_FAIL = 'Ecomail selhal – minikurz zatím neodešel, zkouším znovu';
+
+// Stejná data a štítky jako subscribe.php, jen se zdrojem „meta“.
+function ecomailPayload_(lead, kampan) {
+  if (!PropertiesService.getScriptProperties().getProperty('ECOMAIL_API_KEY')) return null;
+  var parts = String(lead.name).trim().split(/\s+/);
+  var tags = ['minikurz', 'meta'];
+  if (kampan) tags.push('kampan-' + kampan.toLowerCase().replace(/_/g, '-').replace(/[^a-z0-9-]/g, ''));
+  return {
+    subscriber_data: {
+      email: lead.email,
+      name: parts[0] || '',
+      surname: parts.slice(1).join(' '),
+      phone: String(lead.phone).replace(/[^0-9+]/g, ''),
+      tags: tags,
+      custom_fields: { ZKUSENOSTI: lead.zk.join('; '), CIL: lead.zaj.join('; ') }
+    },
+    trigger_autoresponders: true,
+    update_existing: true,
+    resubscribe: false
+  };
+}
+
+function ecomailSubscribe_(payload) {
+  var props = PropertiesService.getScriptProperties();
+  var listId = props.getProperty('ECOMAIL_LIST_ID') || '1';
+  try {
+    var res = UrlFetchApp.fetch('https://api2.ecomailapp.cz/lists/' + encodeURIComponent(listId) + '/subscribe', {
+      method: 'post',
+      contentType: 'application/json',
+      headers: { key: props.getProperty('ECOMAIL_API_KEY') },
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true
+    });
+    var code = res.getResponseCode();
+    if (code >= 200 && code < 300) return true;
+    console.error('Ecomail ' + code + ': ' + res.getContentText());
+  } catch (err) {
+    console.error('Ecomail: ' + err);
+  }
+  return false;
+}
+
+// Ruční záchrana: kontakty, které v Ecomailu vznikly bez štítku „minikurz“
+// a automatizace je minula. V Ecomailu je nejdřív smazat, pak sem doplnit
+// e-maily a funkci jednou spustit — přihlásí je znovu podle pracovní tabulky.
+var ZNOVU = [];
+
+function prihlasZnovu() {
+  if (!PropertiesService.getScriptProperties().getProperty('ECOMAIL_API_KEY')) {
+    throw new Error('Chybí ECOMAIL_API_KEY ve vlastnostech skriptu.');
+  }
+  var values = sheet_().getDataRange().getValues();
+  ZNOVU.forEach(function (email) {
+    var v = findRow_(values, email, '');
+    if (!v) { console.error(email + ': není v pracovní tabulce'); return; }
+    var kampan = (String(v[C.ZDROJ]).match(/minikurz-\d{4}-\d{2}/) || [''])[0];
+    var payload = ecomailPayload_({
+      name: v[C.JMENO], email: v[C.EMAIL], phone: v[C.TEL],
+      zk: split_(v[C.ZK]), zaj: split_(v[C.ZAJ])
+    }, kampan);
+    console.log(email + ': ' + (ecomailSubscribe_(payload) ? 'přihlášen' : 'SELHALO'));
+  });
+}
+
+// Neúspěšná přihlášení se zkouší znovu při každém dalším syncMeta.
+function pending_() {
+  try {
+    return JSON.parse(PropertiesService.getScriptProperties().getProperty('ECOMAIL_PENDING') || '{}');
+  } catch (err) {
+    return {};
+  }
+}
+
+function savePending_(pending) {
+  PropertiesService.getScriptProperties().setProperty('ECOMAIL_PENDING', JSON.stringify(pending));
+}
+
+function retryEcomail_() {
+  var pending = pending_();
+  var ids = Object.keys(pending);
+  if (!ids.length) return;
+  var sh = sheet_();
+  var values = sh.getDataRange().getValues();
+  ids.forEach(function (id) {
+    if (!ecomailSubscribe_(pending[id])) return;
+    delete pending[id];
+    // Poznámku o selhání z řádku zase odebrat.
+    for (var r = 1; r < values.length; r++) {
+      if (String(values[r][C.ID]).split(/,\s*/).indexOf(id) === -1) continue;
+      var pozn = String(values[r][C.POZN]).split(/;\s*/)
+        .filter(function (x) { return x && x !== ECOMAIL_FAIL; }).join('; ');
+      sh.getRange(r + 1, C.POZN + 1).setValue(pozn);
+    }
+  });
+  savePending_(pending);
 }
 
 function knownIds_() {
