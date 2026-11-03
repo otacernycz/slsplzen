@@ -138,11 +138,14 @@ function syncMeta() {
     var iZaj = h.findIndex(function (x) { return x === 'cil' || /zajem|informace/.test(x); });
     var iFormId = col('formid');
     var iFormName = col('formname');
+    var iKampan = col('kampan');
     var cell = function (row, i) { return i === -1 ? '' : String(row[i]).trim(); };
+    // ID formuláře se bere s i bez prefixu „f:“.
+    var bareId = function (x) { return String(x).trim().replace(/^f:/, ''); };
     var formIds = String(props.getProperty('META_FORM_IDS') || '').split(',')
-      .map(function (x) { return x.trim(); }).filter(String);
+      .map(bareId).filter(String);
     var isMinikurz = function (row) {
-      if (formIds.length && iFormId !== -1) return formIds.indexOf(String(row[iFormId]).trim()) !== -1;
+      if (formIds.length && iFormId !== -1) return formIds.indexOf(bareId(row[iFormId])) !== -1;
       if (iFormName !== -1) return /minikurz/i.test(String(row[iFormName]));
       return true;
     };
@@ -158,7 +161,9 @@ function syncMeta() {
 
       var created = iTime === -1 ? null : new Date(row[iTime]);
       var plat = iPlat === -1 ? '' : String(row[iPlat]).trim();
-      var zdrojMeta = 'Meta – okamžitý formulář' + (plat ? ' · ' + (PLATFORMY[plat] || plat) : '');
+      var kampan = cell(row, iKampan);
+      var zdrojMeta = 'Meta – okamžitý formulář' + (plat ? ' · ' + (PLATFORMY[plat] || plat) : '') +
+        (kampan ? ' · ' + kampan : '');
 
       upsert_({
         date: created && !isNaN(created) ? created : new Date(),
