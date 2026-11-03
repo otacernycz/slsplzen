@@ -281,24 +281,59 @@ function formatPhone_(phone) {
   return phone;
 }
 
+// Notifikace ve stejném stylu jako u Životního pojištění. První díl chodí
+// druhý den ráno a pak denně, takže pátý (poslední) díl přijde 5. den po
+// přihlášení — od dalšího dne je čas volat.
+var DNY = ['ne', 'po', 'út', 'st', 'čt', 'pá', 'so'];
+
 function notify_(row) {
   var to = PropertiesService.getScriptProperties().getProperty('NOTIFY_EMAIL');
   if (!to) return;
+  var tz = Session.getScriptTimeZone();
+  var prislo = row[C.DATUM] instanceof Date ? row[C.DATUM] : new Date();
+  var konec = new Date(prislo.getTime() + 5 * 24 * 3600 * 1000);
+  var den = function (d) {
+    return DNY[Number(Utilities.formatDate(d, tz, 'u')) % 7] + ' ' + Utilities.formatDate(d, tz, 'd. M. yyyy');
+  };
+  var konecText = den(konec);
+  var jmeno = row[C.JMENO] || row[C.EMAIL];
+  var tel = String(row[C.TEL] || '');
+  var url = SpreadsheetApp.getActiveSpreadsheet().getUrl();
+
+  var radky = [
+    ['Jméno', esc_(row[C.JMENO])],
+    ['Telefon', tel ? '<a href="tel:' + tel.replace(/\s/g, '') + '">' + esc_(tel) + '</a>' : ''],
+    ['E-mail', esc_(row[C.EMAIL])],
+    ['Zkušenosti', esc_(row[C.ZK])],
+    ['Co ho zajímá', esc_(row[C.ZAJ])],
+    ['Zdroj', esc_(row[C.ZDROJ])],
+    ['Přišlo', Utilities.formatDate(prislo, tz, 'd. M. yyyy H:mm')],
+    ['Kurz končí', konecText + ' (poslední díl)']
+  ].filter(function (r) { return r[1]; });
+
+  var td = 'padding:4px 16px 4px 0;color:#808080';
+  var html = '<div style="font-family:Arial,sans-serif;font-size:15px;color:#333">' +
+    '<p style="margin:0 0 12px">Nový zájemce o <b>minikurz</b>. Kurz mu skončí <b>' + konecText +
+    '</b>, pak je čas zavolat.</p>' +
+    (row[C.POZN] ? '<p style="margin:0 0 12px;color:#D82034"><b>Pozor:</b> ' + esc_(row[C.POZN]) + '</p>' : '') +
+    '<table style="border-collapse:collapse">' +
+    radky.map(function (r) {
+      return '<tr><td style="' + td + '">' + r[0] + '</td><td style="padding:4px 0"><b>' + r[1] + '</b></td></tr>';
+    }).join('') +
+    '</table>' +
+    '<p style="margin:16px 0 0"><a href="' + url + '" style="color:#D82034">Otevřít pracovní tabulku →</a></p></div>';
+
   MailApp.sendEmail({
     to: to,
-    subject: 'Nový lead – minikurz: ' + (row[C.JMENO] || row[C.EMAIL]),
-    body: [
-      'Jméno: ' + row[C.JMENO],
-      'Telefon: ' + row[C.TEL],
-      'E-mail: ' + row[C.EMAIL],
-      'Zkušenosti: ' + row[C.ZK],
-      'Co ho zajímá: ' + row[C.ZAJ],
-      'Zdroj: ' + row[C.ZDROJ],
-      row[C.POZN] ? 'Pozor: ' + row[C.POZN] : '',
-      '',
-      SpreadsheetApp.getActiveSpreadsheet().getUrl()
-    ].join('\n')
+    subject: 'Nový lead: ' + jmeno + ' – Minikurz',
+    body: 'Nový lead (minikurz): ' + jmeno + ', ' + tel + ', ' + row[C.EMAIL] +
+      '\nKurz končí ' + konecText + (row[C.POZN] ? '\nPozor: ' + row[C.POZN] : '') + '\n' + url,
+    htmlBody: html
   });
+}
+
+function esc_(v) {
+  return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 function json_(obj) {
