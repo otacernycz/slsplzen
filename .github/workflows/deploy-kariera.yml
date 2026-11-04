@@ -1,0 +1,34 @@
+name: Deploy kariera-web to Wedos (FTP)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "kariera-web/**"
+      - ".github/workflows/deploy-kariera.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Zatím náhled pro klienta na investicniminikurz.cz/nabor/.
+      # Až bude vlastní doména, změnit server-dir na ./www/domains/<doména>/.
+      - name: Upload kariera-web/ to Wedos via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.WEDOS_FTP_HOST }}
+          username: ${{ secrets.WEDOS_FTP_USER }}
+          password: ${{ secrets.WEDOS_FTP_PASSWORD }}
+          local-dir: ./kariera-web/
+          server-dir: ./www/nabor/
+          exclude: |
+            **/README.md
+            **/kariera-config.php
+            **/kariera-config.example.php
+            **/.git*
+            **/.git*/**
