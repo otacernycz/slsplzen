@@ -92,7 +92,7 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
 .catch p { margin: 0; font-size: 16px; line-height: 1.55; color: var(--grey-1); }
 
 /* USP */
-.usps { padding-top: clamp(48px, 6vw, 64px); padding-bottom: clamp(48px, 6vw, 64px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: clamp(32px, 4vw, 48px); }
+.usps { padding-top: clamp(48px, 6vw, 64px); padding-bottom: clamp(48px, 6vw, 64px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: clamp(32px, 4vw, 48px); }
 .usp { display: flex; flex-direction: column; gap: 8px; }
 .usp-icon { width: 48px; height: 48px; border-radius: 999px; border: 1px solid var(--line); background: #fff; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
 .usp-title { font-family: var(--serif); font-style: italic; font-size: 21px; }
