@@ -195,11 +195,13 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
 .about-copy p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--grey-1); }
 .partners { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
 .about-visual img { width: 100%; height: auto; }
-.partner { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 17px; font-weight: 600; }
+.partner { display: flex; align-items: center; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--line); font-size: 17px; font-weight: 600; }
 .partner-rule { width: 32px; height: 2px; background: var(--red); flex: none; }
 .partner:has(.partner-desc) { align-items: flex-start; }
-.partner:has(.partner-desc) .partner-rule { margin-top: 12px; }
-.partner-name { display: block; }
+.partner:has(.partner-desc) .partner-rule { margin-top: 18px; }
+.partner-logo { display: block; height: 34px; width: auto; margin: 2px 0 10px; }
+/* BNP má dva řádky textu – opticky vyrovnat s jednoslovným logem EnCor */
+.partner-logo[src*="bnp"] { height: 42px; margin-top: -2px; }
 .partner-desc { display: block; margin-top: 4px; font-size: 14px; font-weight: 400; line-height: 1.5; color: var(--grey-1); }
 
 /* Footer */
@@ -425,8 +427,8 @@ h1, h2, h3 { font-family: var(--serif); font-style: italic; font-weight: 400; ma
     <p>Jsme součástí Swiss Life Group — švýcarské finanční skupiny s více než 165letou historií. Klientům pomáháme s investicemi, financováním i správou nemovitostí pod jednou střechou.</p>
     <div class="partners">
     <div class="eyebrow">Ve spolupráci s</div>
-    <div class="partner"><span class="partner-rule"></span><span><span class="partner-name">EnCor Asset Management</span><span class="partner-desc">Česká investiční společnost zaměřená na profesionální správu majetku a investičních fondů, která využívá vlastní matematické modely pro tvorbu investičních strategií.</span></span></div>
-    <div class="partner"><span class="partner-rule"></span><span><span class="partner-name">BNP Paribas Asset Management</span><span class="partner-desc">Jeden z předních evropských správců aktiv s globální působností, který nabízí investiční řešení pro individuální investory, firmy i institucionální klienty.</span></span></div>
+    <div class="partner"><span class="partner-rule"></span><span><img class="partner-logo" src="assets/partner-encor.png" width="487" height="105" alt="EnCor Asset Management" loading="lazy"><span class="partner-desc">Česká investiční společnost zaměřená na profesionální správu majetku a investičních fondů, která využívá vlastní matematické modely pro tvorbu investičních strategií.</span></span></div>
+    <div class="partner"><span class="partner-rule"></span><span><img class="partner-logo" src="assets/partner-bnp-paribas-am.jpg" width="661" height="138" alt="BNP Paribas Asset Management" loading="lazy"><span class="partner-desc">Jeden z předních evropských správců aktiv s globální působností, který nabízí investiční řešení pro individuální investory, firmy i institucionální klienty.</span></span></div>
     </div>
   </div>
 </section>
