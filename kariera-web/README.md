@@ -17,6 +17,15 @@ kariera-config.example.php  vzor konfigurace (na serveru jako kariera-config.php
 Další pozice (koncipient, asistent prodeje): zkopírovat `manazer.html`, upravit texty
 a `data-source` na formuláři, v `index.html` přepnout odkaz z `#kontakt` na nový soubor.
 
+## Nasazení
+
+Push do `main`, který mění `kariera-web/`, se přes GitHub Actions
+(`.github/workflows/deploy-kariera.yml`) nahraje na Wedos do `www/nabor/`,
+tedy na **investicniminikurz.cz/nabor/** – zatím jako náhled pro klienta
+(stránky mají `noindex`, před spuštěním odebrat). Až bude vlastní doména,
+stačí ve workflow změnit `server-dir`. `kariera-config.php` se nenahrává,
+na server ho dát ručně přes FTP (bez něj formulář ukáže chybu).
+
 ## Co zbývá
 
 1. **Formulář → Google Sheet.** Formulář posílá na `lead.php`, ten lead zapíše
