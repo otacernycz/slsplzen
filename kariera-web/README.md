@@ -72,7 +72,7 @@ na server ho dát ručně přes FTP (bez něj formulář ukáže chybu).
    - OG obrázky `assets/img/og-image.jpg`, `assets/img/og-manazer.jpg` (1200×630)
    - po doplnění smazat třídu `.ph` ze `style.css`
 
-3. **Texty v [HRANATÝCH ZÁVORKÁCH]** – adresa, telefon, e-mail, pozice lidí,
+3. **Texty v [HRANATÝCH ZÁVORKÁCH]** – pozice Pavla,
    citát Pavla, doba odezvy [X] dnů, odstavec o kanceláři.
 
 4. **GDPR** – odkaz na zásady ochrany osobních údajů (formulář i patička);
