@@ -175,6 +175,16 @@
     </div>
     <div class="form-card">
       <form id="lead-form" data-source="kariera-manazer" novalidate>
+        <fieldset class="q">
+          <legend class="q-label">Čemu se teď věnujete?</legend>
+          <div class="opts chips">
+            <button type="button" class="opt chip" data-value="Manažer – vede tým" aria-pressed="true">Vedu tým</button>
+            <button type="button" class="opt chip" data-value="Manažer – poradce" aria-pressed="false">Jsem poradce</button>
+            <button type="button" class="opt chip" data-value="Manažer – banka/pojišťovna" aria-pressed="false">Banka / pojišťovna</button>
+            <button type="button" class="opt chip" data-value="Jiná pozice" aria-pressed="false">Zajímá mě jiná pozice</button>
+          </div>
+          <input type="hidden" name="pozice" value="Manažer – vede tým">
+        </fieldset>
         <div class="field">
           <label for="f-jmeno">Jméno a příjmení</label>
           <input id="f-jmeno" type="text" name="jmeno" autocomplete="name" required>
@@ -189,16 +199,6 @@
             <input id="f-email" type="email" name="email" autocomplete="email">
           </div>
         </div>
-        <fieldset class="q">
-          <legend class="q-label">Čemu se teď věnujete?</legend>
-          <div class="opts chips">
-            <button type="button" class="opt chip" data-value="Manažer – vede tým" aria-pressed="true">Vedu tým</button>
-            <button type="button" class="opt chip" data-value="Manažer – poradce" aria-pressed="false">Jsem poradce</button>
-            <button type="button" class="opt chip" data-value="Manažer – banka/pojišťovna" aria-pressed="false">Banka / pojišťovna</button>
-            <button type="button" class="opt chip" data-value="Jiná pozice" aria-pressed="false">Zajímá mě jiná pozice</button>
-          </div>
-          <input type="hidden" name="pozice" value="Manažer – vede tým">
-        </fieldset>
         <div class="hp" aria-hidden="true"><label>Web <input type="text" name="web" tabindex="-1" autocomplete="off"></label></div>
         <label class="consent">
           <input type="checkbox" name="souhlas">
